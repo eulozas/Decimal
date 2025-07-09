@@ -63,6 +63,11 @@ int get_sign(const s21_decimal *decimal){
     return (decimal->bits[3]>>31) & 1;
 }
 
+int get_scale(const s21_decimal *decimal){
+    if (!decimal) return 0;//?????
+    return (decimal->bits[3] >> 16) & 0b11111111; //0xFF
+}
+
 int main() {
     s21_decimal *decimal;
     s21_from_int_to_decimal(-2,decimal);
