@@ -9,6 +9,6 @@ void set_bit(s21_decimal *decimal, int index, int val);
 void set_sign(s21_decimal* decimal);
 void clear_sign(s21_decimal* decimal);
 int get_sign(const s21_decimal *decimal);
-
+int get_exp_from_float(float f);
 
 #endif

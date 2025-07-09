@@ -62,12 +62,48 @@ int get_sign(const s21_decimal *decimal){
     if (!decimal) return 0;//?????
     return (decimal->bits[3]>>31) & 1;
 }
+void set_bit_int(int* d,int index, int val){
+    if (!d || index < 0 || index > 31) return;//????
+    unsigned int mask = 1u << index;
+    if(val){
+        *d = *d | mask;
+    }else{
+        *d = *d & ~mask;
+    }  
+}
+
+int get_exp_from_float(float f){
+    unsigned int fbits = *((unsigned int*)&f);
+    unsigned int exp_127 = 0;
+
+    for(int i=30;i>=23;i--){
+        set_bit_int(&exp_127, i-23, (fbits >> i) & 1);
+    }
+
+    // for(int i=31;i>=0;i--){
+    //     printf("%d", (exp_127 >> i) & 1);
+    // }
+
+    int exp;
+
+    if(exp_127==0){
+        exp = -126;
+    }else if(exp_127== 0xFF){//inf Nan
+        exp = 128;
+    }else{
+        exp = (int)exp_127 - 127;
+    }
+    
+    //printf("  %d", exp);
+    return exp;
+}
 
 int main() {
     s21_decimal *decimal;
     s21_from_int_to_decimal(-2,decimal);
 
     print_bits(decimal);
+    get_exp_from_float(6.75);
 
     return 0;
 }
