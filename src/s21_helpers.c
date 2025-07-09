@@ -1,24 +1,41 @@
 #include <stdio.h>
 #include "s21_helpers.h"
 
-
-void* print_bits(s21_decimal *decimal) {
-    for (int i = 31; i >= 0; i--) {
+void print_bits(const s21_decimal *decimal) {
+    for (int i = 127; i >= 96; i--) {
+        printf("%d", (decimal->bits[3] >> i) & 1);
+        if (i % 8 == 0) printf(" "); 
+    }
+    printf("| ");
+    for (int i = 95; i >= 64; i--) {
+        printf("%d", (decimal->bits[2] >> i) & 1);
+        if (i % 8 == 0) printf(" "); 
+    }
+    printf("| ");
+    for (int i = 63; i >= 32; i--) {
+        printf("%d", (decimal->bits[1] >> i) & 1);
+        if (i % 8 == 0) printf(" "); 
+    }
+    printf("| ");
+   for (int i = 31; i >= 0; i--) {
         printf("%d", (decimal->bits[0] >> i) & 1);
         if (i % 8 == 0) printf(" "); 
     }
     printf("\n");
 }
 
-int get_bit(s21_decimal *decimal, int index){
+int get_bit(const s21_decimal *decimal, int index){
+    if (!decimal || index < 0 || index > 127) return 0;//см по покрытию и логике далее нужно ли это? и ретерн надо изменить на другое значение
 
     int bit_index = index % 32;
     int bit_number = index / 32;
 
-    return (decimal->bits[bit_number]>>bit_index) & 1u;
+    return (decimal->bits[bit_number] >> bit_index) & 1u;
 }
 
 void set_bit(s21_decimal *decimal, int index, int val){
+    if (!decimal || index < 0 || index > 127) return;//см по покрытию и логике далее нужно ли это? и ретерн надо изменить на другое значение
+
     int bit_index = index % 32;
     int bit_number = index / 32;
 
@@ -31,19 +48,26 @@ void set_bit(s21_decimal *decimal, int index, int val){
     }
 }
 
+void set_sign(s21_decimal* decimal){
+    if (!decimal) return;//?????
+    set_bit(decimal, 127, 1);
+}
+
+void clear_sign(s21_decimal* decimal){
+    if (!decimal) return;//?????
+    set_bit(decimal, 127, 0);
+}
+
+int get_sign(const s21_decimal *decimal){
+    if (!decimal) return 0;//?????
+    return (decimal->bits[3]>>31) & 1;
+}
+
 int main() {
-    s21_decimal decimal = {10010, 1, 0, 0};
-    print_bits(&decimal);
-    printf("8 bit - %d\n", get_bit(&decimal, 8));
-    printf("9 bit - %d\n", get_bit(&decimal, 9));
-    printf("10 bit - %d\n", get_bit(&decimal, 10));
-    printf("11 bit - %d\n", get_bit(&decimal, 14));
+    s21_decimal *decimal;
+    s21_from_int_to_decimal(-2,decimal);
 
-    set_bit(&decimal, 8, 0);
-    printf("8 bit - %d\n", get_bit(&decimal, 8));
-
-    set_bit(&decimal, 11, 1);
-    printf("11 bit - %d\n", get_bit(&decimal, 11));
+    print_bits(decimal);
 
     return 0;
 }
