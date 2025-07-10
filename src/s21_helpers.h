@@ -9,6 +9,8 @@ void set_bit(s21_decimal *decimal, int index, int val);
 void set_sign(s21_decimal* decimal);
 void clear_sign(s21_decimal* decimal);
 int get_sign(const s21_decimal *decimal);
+int base_add(const s21_decimal *value_1, const s21_decimal *value_2, s21_decimal *result);
+int base_sub(const s21_decimal *value_1, const s21_decimal *value_2, s21_decimal *result);
 
 
 #endif

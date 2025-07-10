@@ -64,10 +64,15 @@ int get_sign(const s21_decimal *decimal){
 }
 
 int main() {
-    s21_decimal *decimal;
-    s21_from_int_to_decimal(-2,decimal);
+    s21_decimal dec1 = {232424, 647864, 0, 0};
+    s21_decimal dec2 = {11, 3, 0, 0};
+    // s21_from_int_to_decimal(-2,decimal);
+    s21_decimal res;
 
-    print_bits(decimal);
+    base_sub(&dec1, &dec2, &res);
+    // print_bits(&dec1);
+    // print_bits(&dec2);
+    print_bits(&res);
 
     return 0;
 }
