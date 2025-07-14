@@ -11,6 +11,9 @@ void clear_sign(s21_decimal* decimal);
 int get_sign(const s21_decimal *decimal);
 int base_add(const s21_decimal *value_1, const s21_decimal *value_2, s21_decimal *result);
 int base_sub(const s21_decimal *value_1, const s21_decimal *value_2, s21_decimal *result);
-
+int get_scale(const s21_decimal *decimal);
+void mul_10_value(s21_decimal* value_1);
+void make_same_scales(s21_decimal* value_1, int* scale_value_1, int* scale_value_2);
+int is_zero(const s21_decimal* decimal);
 
 #endif

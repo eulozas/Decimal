@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdint.h>
 #include "s21_helpers.h"
 
 void print_bits(const s21_decimal *decimal) {
@@ -63,6 +64,47 @@ int get_sign(const s21_decimal *decimal){
     return (decimal->bits[3]>>31) & 1;
 }
 
+int get_scale(const s21_decimal *decimal){
+    if (!decimal) return 0;//?????
+    return (decimal->bits[3] >> 16) & 0xFF;
+}
+
+void mul_10_value(s21_decimal* value_1){
+    int overflow = 0;
+
+    for(int i = 0; i < 3; i++){
+        uint64_t buffer = (uint64_t)value_1->bits[i] * 10 + overflow;
+        value_1->bits[i] = (uint32_t)buffer & 0xFFFFFFFF;
+        overflow = buffer >> 32;
+    }
+
+    if(overflow != 0){//
+        //переполнение
+    }
+}
+
+void make_same_scales(s21_decimal* value_1, int* scale_value_1, int* scale_value_2){
+    while(*scale_value_1 < *scale_value_2){
+        mul_10_value(value_1);
+        (*scale_value_1)++;
+    }
+}
+
+int is_zero(const s21_decimal* decimal){
+    return decimal->bits[0] == 0 && decimal->bits[1] == 0 && decimal->bits[2] == 0;
+}
+
+
+// int main() {
+//     s21_decimal a = {{1000, 0, 0, 1 << 16}};  // 100.0
+//     s21_decimal b = {{10000, 0, 0, 2 << 16}}; // 100.00
+
+
+//     printf("%d\n", s21_is_equal(a, b));
+
+//     return 0;
+// }
+
 int main() {
     s21_decimal dec1 = {232424, 647864, 0, 0};
     s21_decimal dec2 = {11, 3, 0, 0};
@@ -74,5 +116,4 @@ int main() {
     // print_bits(&dec2);
     print_bits(&res);
 
-    return 0;
 }
