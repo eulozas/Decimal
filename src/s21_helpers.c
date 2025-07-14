@@ -94,6 +94,11 @@ int is_zero(const s21_decimal* decimal){
     return decimal->bits[0] == 0 && decimal->bits[1] == 0 && decimal->bits[2] == 0;
 }
 
+void to_zero(s21_decimal* decimal) {
+    for (int i = 0; i < 4; i++) {
+        decimal->bits[i] = 0;
+    }
+}
 
 // int main() {
 //     s21_decimal a = {{1000, 0, 0, 1 << 16}};  // 100.0
@@ -106,14 +111,14 @@ int is_zero(const s21_decimal* decimal){
 // }
 
 int main() {
-    s21_decimal dec1 = {232424, 647864, 0, 0};
-    s21_decimal dec2 = {11, 3, 0, 0};
+    s21_decimal dec1 = {-6, 0, 0, 0};
+    s21_decimal dec2 = {0, 0, 0, 0};
     // s21_from_int_to_decimal(-2,decimal);
     s21_decimal res;
 
-    base_sub(&dec1, &dec2, &res);
+    // base_sub(&dec1, &dec2, &res);
     // print_bits(&dec1);
     // print_bits(&dec2);
-    print_bits(&res);
+    print_bits(&dec1);
 
 }
