@@ -49,6 +49,21 @@ void set_bit(s21_decimal *decimal, int index, int val){
     }
 }
 
+void set_bit_big(big_decimal *decimal, int index, int val){
+    if (!decimal || index < 0 || index > 224) return;//см по покрытию и логике далее нужно ли это? и ретерн надо изменить на другое значение
+
+    int bit_index = index % 32;
+    int bit_number = index / 32;
+
+    unsigned int mask = 1u << bit_index;
+
+    if(val){
+        decimal->bits[bit_number] = decimal->bits[bit_number] | mask;
+    }else{
+        decimal->bits[bit_number] = decimal->bits[bit_number] & ~mask;
+    }
+}
+
 void set_sign(s21_decimal* decimal){
     if (!decimal) return;//?????
     set_bit(decimal, 127, 1);
