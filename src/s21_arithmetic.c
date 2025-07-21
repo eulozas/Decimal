@@ -31,17 +31,23 @@ int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 
 int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     big_decimal temp_value_1 = {0}, temp_value_2 = {0}, temp_result = {0};
-    for (int i = 0; i < 224; i++) {
-        int num = get_bit(&value_1, i);
-        if (num) {
-            shift_left(&temp_value_2, i);//функцию сдвига надо написать
-            base_add(&temp_result, &temp_value_2, &temp_result); //??????? все норм если изменить в самой base_add работать над конвертируемыми числами и уже в конце записывать результат
-        }
-    }
+    base_mull(&temp_value_1, &temp_value_2, &temp_result);
+    big_to_decimal(&temp_result, result);
     return 0;
 }
 
 int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
+    int q = 0;
+    int tmp_shift = 1;
+    big_decimal digit = {0};
+    digit.bits[0] = 1u;
+    while (s21_is_less_or_equal(value_2, value_1)) {
+        big_decimal temp_value_1 = {0}, temp_value_2 = {0}, temp_result = {0};
+        to_big_decimal(&value_1, &temp_value_1);
+        to_big_decimal(&value_2, &temp_value_2);
+        shift_left(&digit, &tmp_shift);
+        base_mull(&temp_value_2, &digit, &temp_result);
+    }
     return 0;
 }
 
@@ -67,6 +73,16 @@ int base_sub(const big_decimal *value_1, const big_decimal *value_2, big_decimal
     set_bit_big(result, i, borrow ^ num1 ^ num2);
     borrow = ((~num1 & 1u) & num2) | (borrow & (~num1 & 1u)) | (borrow & num1 & num2);
   }
+}
+
+int base_mull(const big_decimal *value_1, const big_decimal *value_2, big_decimal *result){
+    for (int i = 0; i < 224; i++) {
+        int num = get_bit(&value_1, i);
+        if (num) {
+            shift_left(value_2, i);
+            base_add(result, value_2, result); //??????? все норм если изменить в самой base_add работать над конвертируемыми числами и уже в конце записывать результат
+        }
+    }
 }
 
 void shift_left(big_decimal* decimal, const int* index) {

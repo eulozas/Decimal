@@ -19,5 +19,10 @@ void mul_10_value(s21_decimal* value_1);
 void make_same_scales(s21_decimal* value_1, int* scale_value_1, int* scale_value_2);
 int is_zero(const s21_decimal* decimal);
 void to_zero(s21_decimal* decimal);
+void to_big_decimal(const s21_decimal* decimal, big_decimal* big_decimal);
+void big_to_decimal(const big_decimal* big_decimal, s21_decimal* decimal);
+void init_big_decimal(big_decimal *decimal);
+void shift_right(big_decimal* decimal, const int* index);
+void shift_left(big_decimal* decimal, const int* index);
 
 #endif
