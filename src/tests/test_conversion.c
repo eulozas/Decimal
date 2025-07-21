@@ -25,6 +25,26 @@ END_TEST
 
 START_TEST(test_float_to_decimal_simple2) {
     s21_decimal decimal;
+    float x = 4444443.5;
+    int res = s21_from_float_to_decimal(x, &decimal);
+    ck_assert_int_eq(0, res);
+
+    unsigned int sign_c_sharp = 0;
+    unsigned int scale_c_sharp = 0;
+    unsigned int mantissa0_c_sharp = 4444444;
+    unsigned int mantissa1_c_sharp = 0;
+    unsigned int mantissa2_c_sharp = 0;
+    
+    ck_assert_uint_eq(decimal.bits[3]>>31 & 1u, sign_c_sharp);
+    ck_assert_uint_eq(decimal.bits[3]>>16 & 0xFF, scale_c_sharp);
+    ck_assert_uint_eq(decimal.bits[0], mantissa0_c_sharp);
+    ck_assert_uint_eq(decimal.bits[1], mantissa1_c_sharp);
+    ck_assert_uint_eq(decimal.bits[2], mantissa2_c_sharp);
+}
+END_TEST
+
+START_TEST(test_float_to_decimal_simple3) {
+    s21_decimal decimal;
     float x = 12300.999;
     int res = s21_from_float_to_decimal(x, &decimal);
     ck_assert_int_eq(0, res);
@@ -489,6 +509,48 @@ START_TEST(test_decimal_to_int_simple1) {
 }
 END_TEST
 
+START_TEST(test_decimal_to_int_negative) {
+    int n;
+    s21_decimal decimal = {{0x000D7286, 0x00003A8A, 0x00000000, 0x800A0000}};
+    int res = s21_from_decimal_to_int(decimal, &n);
+    int int_res = -6436;
+    ck_assert_int_eq(0, res);
+    ck_assert_int_eq(n, int_res);
+}
+END_TEST
+
+START_TEST(test_decimal_to_int_with_mid) {
+    int n;
+    s21_decimal decimal = {{0xFFFFFFF1, 0xFFFFFFF1, 0x00000000, 0x00080000}};
+    int res = s21_from_decimal_to_int(decimal, &n);
+    ck_assert_int_eq(1, res);
+}
+END_TEST
+
+START_TEST(test_decimal_to_int_with_high) {
+    int n;
+    s21_decimal decimal = {{0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0x00080000}};
+    int res = s21_from_decimal_to_int(decimal, &n);
+    ck_assert_int_eq(1, res);
+}
+END_TEST
+
+START_TEST(test_decimal_to_int_with_high_neg) {
+    int n;
+    s21_decimal decimal = {{0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0x80080000}};
+    int res = s21_from_decimal_to_int(decimal, &n);
+    ck_assert_int_eq(1, res);
+}
+END_TEST
+
+START_TEST(test_decimal_to_int_more_max_low) {
+    int n;
+    s21_decimal decimal = {{0x80000001, 0x0, 0x0, 0x80000000}};
+    int res = s21_from_decimal_to_int(decimal, &n);
+    ck_assert_int_eq(1, res);
+}
+END_TEST
+
 
 Suite *from_float_to_decimal(void) {
     Suite *s;
@@ -499,6 +561,7 @@ Suite *from_float_to_decimal(void) {
 
     tcase_add_test(tc, test_float_to_decimal_simple1);
     tcase_add_test(tc, test_float_to_decimal_simple2);
+    tcase_add_test(tc, test_float_to_decimal_simple3);
     tcase_add_test(tc, test_float_to_decimal_int_div10);
     tcase_add_test(tc, test_float_to_decimal_int);
     tcase_add_test(tc, test_float_to_decimal_basic);
@@ -551,6 +614,11 @@ Suite *from_decimal_to_int(void) {
     tcase_add_test(tc, test_decimal_to_int_uncorrect_scale1);
     tcase_add_test(tc, test_decimal_to_int_uncorrect_scale2);
     tcase_add_test(tc, test_decimal_to_int_simple1);
+    tcase_add_test(tc, test_decimal_to_int_negative);
+    tcase_add_test(tc, test_decimal_to_int_with_mid);
+    tcase_add_test(tc, test_decimal_to_int_with_high);
+    tcase_add_test(tc, test_decimal_to_int_with_high_neg);
+    tcase_add_test(tc, test_decimal_to_int_more_max_low);
 
     suite_add_tcase(s, tc);
     return s;

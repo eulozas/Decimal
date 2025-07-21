@@ -7,13 +7,13 @@ int s21_from_decimal_to_int(s21_decimal src, int *dst){
     int exit_code = 0;
     int sign = get_sign(&src);
     int scale = get_scale(&src);
-    if(scale>MAX_SCALE || scale < 0){
-        return 1;
+    if(scale < 0 || scale > MAX_SCALE){
+        exit_code = 1;
     }
-
-    unsigned int low = src.bits[0];
-    unsigned int mid = src.bits[1];
-    unsigned int high = src.bits[2];
+    if(!exit_code){
+        unsigned int low = src.bits[0];
+        unsigned int mid = src.bits[1];
+        unsigned int high = src.bits[2];
 
     while (scale > 0) {
         divide_by_10(&high, &mid, &low);
@@ -29,6 +29,8 @@ int s21_from_decimal_to_int(s21_decimal src, int *dst){
             result = -result;
         }
         *dst = result;
+    }
+
     }
     
     return exit_code;
