@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdint.h>
 #include "s21_helpers.h"
 
 
@@ -18,7 +19,22 @@ int get_bit(const s21_decimal *decimal, int index){
 }
 
 void set_bit(s21_decimal *decimal, int index, int val){
-    if (!decimal || index < 0 || index > 127) return;//?????
+    if (!decimal || index < 0 || index > 127) return;//см по покрытию и логике далее нужно ли это? и ретерн надо изменить на другое значение
+
+    int bit_index = index % 32;
+    int bit_number = index / 32;
+
+    unsigned int mask = 1u << bit_index;
+
+    if(val){
+        decimal->bits[bit_number] = decimal->bits[bit_number] | mask;
+    }else{
+        decimal->bits[bit_number] = decimal->bits[bit_number] & ~mask;
+    }
+}
+
+void set_bit_big(big_decimal *decimal, int index, int val){
+    if (!decimal || index < 0 || index > 224) return;//см по покрытию и логике далее нужно ли это? и ретерн надо изменить на другое значение
 
     int bit_index = index % 32;
     int bit_number = index / 32;
@@ -47,16 +63,59 @@ int get_sign(const s21_decimal *decimal){
     return (decimal->bits[3]>>31) & 1u;
 }
 
+int get_scale(const s21_decimal *decimal){
+    if (!decimal) return 0;//?????
+    return (decimal->bits[3] >> 16) & 0xFF;
+}
+
+void mul_10_value(s21_decimal* value_1){
+    int overflow = 0;
+
+    for(int i = 0; i < 3; i++){
+        uint64_t buffer = (uint64_t)value_1->bits[i] * 10 + overflow;
+        value_1->bits[i] = (uint32_t)buffer & 0xFFFFFFFF;
+        overflow = buffer >> 32;
+    }
+
+    if(overflow != 0){//
+        //переполнение
+    }
+}
+
+void make_same_scales(s21_decimal* value_1, int* scale_value_1, int* scale_value_2){
+    while(*scale_value_1 < *scale_value_2){
+        mul_10_value(value_1);
+        (*scale_value_1)++;
+    }
+}
+
+int is_zero(const s21_decimal* decimal){
+    return decimal->bits[0] == 0 && decimal->bits[1] == 0 && decimal->bits[2] == 0;
+}
+
+void to_zero(s21_decimal* decimal) {
+    for (int i = 0; i < 4; i++) {
+        decimal->bits[i] = 0;
+    }
+}
+
+// int main() {
+//     s21_decimal a = {{1000, 0, 0, 1 << 16}};  // 100.0
+//     s21_decimal b = {{10000, 0, 0, 2 << 16}}; // 100.00
+
+
+//     printf("%d\n", s21_is_equal(a, b));
+
+//     return 0;
+// }
+
+
 void set_scale(s21_decimal *decimal, int scale) {
     if (!decimal) return;//?????
     decimal->bits[3] &= ~(0xFF << 16);
     decimal->bits[3] |= (scale << 16);
 }
 
-int get_scale(const s21_decimal *decimal) {
-    if (!decimal) return -1;//???
-    return (decimal->bits[3] >> 16) & 0xFF;
-}
 
 int count_digits_before_point(unsigned long long n) {
     int count = 0;
