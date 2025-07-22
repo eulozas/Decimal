@@ -22,7 +22,9 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst){
         int scale = 0;
         unsigned long long mantissa = 0;
         int digits = 0;
-        if(value>1e6){
+        if (src == 0.0f) {
+            exit_code = 0;
+        }else if (value>1e6){
             int point = find_point_index(value); 
             scale = point - (SIGNIF_DIGITS - 1);
             double rounded_value = bank_round(value / pow(10.0, scale));

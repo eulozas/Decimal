@@ -13,8 +13,8 @@ Suite *from_decimal_to_int(void);
 
 // Suite *from_int_to_decimal_suite1(void);
 
-//Suite *from_float_to_decimal_suite1(void);
-//Suite *from_float_to_decimal_suite2(void);
+// Suite *from_float_to_decimal_suite1(void);
+// Suite *from_float_to_decimal_suite2(void);
 // Suite *from_float_to_decimal_suite3(void);
 // Suite *from_float_to_decimal_suite4(void);
 // Suite *from_float_to_decimal_suite5(void);
@@ -37,8 +37,8 @@ int main(void) {
 
   // srunner_add_suite(sr, from_int_to_decimal_suite1());
 
-  //srunner_add_suite(sr, from_float_to_decimal_suite1());
-  //srunner_add_suite(sr, from_float_to_decimal_suite2());
+  // srunner_add_suite(sr, from_float_to_decimal_suite1());
+  // srunner_add_suite(sr, from_float_to_decimal_suite2());
   // srunner_add_suite(sr, from_float_to_decimal_suite3());
   // srunner_add_suite(sr, from_float_to_decimal_suite4());
   // srunner_add_suite(sr, from_float_to_decimal_suite5());
