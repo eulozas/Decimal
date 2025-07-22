@@ -12,11 +12,6 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst){
         exit_code = 1; 
     }
 
-    // if (src == 0.0f) {
-    //     if (signbit(src)) set_sign(dst);
-    //     return 0;
-    // }
-
     if(!exit_code){
         double value = fabs((double)src);
         int scale = 0;

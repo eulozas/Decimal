@@ -2,6 +2,7 @@
 #define S21_HELPERS_H
 
 #include "s21_decimal.h"
+#include <math.h>
 
 
 #define MINUS 0x80000000

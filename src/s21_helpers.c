@@ -2,7 +2,6 @@
 #include <stdint.h>
 #include "s21_helpers.h"
 
-
 void clear_decimal(s21_decimal *decimal) {
     if (!decimal) return;
     for (int i = 0; i < 4; ++i) {
@@ -98,17 +97,6 @@ void to_zero(s21_decimal* decimal) {
         decimal->bits[i] = 0;
     }
 }
-
-// int main() {
-//     s21_decimal a = {{1000, 0, 0, 1 << 16}};  // 100.0
-//     s21_decimal b = {{10000, 0, 0, 2 << 16}}; // 100.00
-
-
-//     printf("%d\n", s21_is_equal(a, b));
-
-//     return 0;
-// }
-
 
 void set_scale(s21_decimal *decimal, int scale) {
     if (!decimal) return;//?????
@@ -218,16 +206,21 @@ void divide_by_10(unsigned int *high, unsigned int *mid, unsigned int *low) {
 // //s21_decimal decimal = {{0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0x001C0000}};
 // // int x;
 // // s21_from_decimal_to_int(decimal, &x);
+// float b = 2123.239;
+// printf("%.20f\n", b);
 // s21_decimal decimal;
-// float a = 5.1;
-// s21_from_float_to_decimal(a, &decimal);
-
-// printf("%.20f\n", a);
+// s21_from_float_to_decimal(b, &decimal);
 
 // printf("decimal scale %d\n", decimal.bits[3]>>16 & 0xFF);
 // printf("decimal low %u\n", decimal.bits[0]);
 // printf("decimal mid %u\n", decimal.bits[1]);
 // printf("decimal high %u\n", decimal.bits[2]);
+// float a;
+// s21_from_decimal_to_float(decimal, &a);
+
+// printf("%.20f\n", a);
+
+
 
 // //printf("int %d\n", x);
 
