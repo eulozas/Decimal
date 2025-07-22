@@ -13,12 +13,12 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst){
     }
 
     if(!exit_code){
-        
-        double res = (double)src.bits[0] + (double)src.bits[1] * (1ULL << 32) + (double)src.bits[2] * (1ULL << 64);
-        res /= pow(10, scale);
-        if(sign) res = -res;
+        double res = src.bits[0] + src.bits[1]*pow(2,32) + src.bits[2]*pow(2,64);
+        if(sign){
+            res = -res;
+        }
+        res/=pow(10, scale);
         *dst = (float)res;
-
     }
 
     return exit_code;
