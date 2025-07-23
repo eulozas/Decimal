@@ -2,9 +2,9 @@
 #include "s21_helpers.h"
 
 int s21_from_int_to_decimal(int src, s21_decimal *dst){
-    if(!dst) return 1;//?????
+    if(!dst) return 1;
 
-    dst->bits[0] = dst->bits[1] = dst->bits[2] = dst->bits[3] = 0;
+    clear_decimal(dst);
 
     unsigned int u_src;
     if(src<0){
@@ -17,8 +17,3 @@ int s21_from_int_to_decimal(int src, s21_decimal *dst){
 
     return 0;
 }
-
-// int s21_from_float_to_decimal(float src, s21_decimal *dst){
-
-// }
-
