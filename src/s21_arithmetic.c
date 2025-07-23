@@ -2,7 +2,9 @@
 #include "s21_helpers.h"
 
 int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-    big_decimal big_value_1 = {0}, big_value_2 = {0}, big_result = {0};
+    // int sign1 = get_sign(&value_1);
+    // int sign2 = get_sign(&value_2);
+    s21_big_decimal big_value_1 = {0}, big_value_2 = {0}, big_result = {0};
     to_big_decimal(&value_1, &big_value_1);
     to_big_decimal(&value_2, &big_value_2);
     to_big_decimal(result, &big_result);
@@ -31,7 +33,7 @@ int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 }
 
 int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-    big_decimal temp_value_1 = {0}, temp_value_2 = {0}, temp_result = {0};
+    s21_big_decimal temp_value_1 = {0}, temp_value_2 = {0}, temp_result = {0};
     to_big_decimal(&value_1, &temp_value_1);
     to_big_decimal(&value_2, &temp_value_2);
     to_big_decimal(result, &temp_result);
@@ -55,7 +57,7 @@ int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 //     return 0;
 // }
 
-int base_add(const big_decimal *value_1, const big_decimal *value_2, big_decimal *result) {
+int base_add(const s21_big_decimal *value_1, const s21_big_decimal *value_2, s21_big_decimal *result) {
     int carry = 0;
     for (int i = 0; i < 224; i++) {
         int num1 = get_bit_big(value_1, i);
@@ -63,12 +65,10 @@ int base_add(const big_decimal *value_1, const big_decimal *value_2, big_decimal
         set_bit_big(result, i, num1 ^ num2 ^ carry);
         carry = (num1 & num2) | (num1 & carry) | (num2 & carry);
     }
-    if (carry) return 1;
-    //возможно нормализовать нужно
-    return 0;
+    return carry;
 }
 
-int base_sub(const big_decimal *value_1, const big_decimal *value_2, big_decimal *result){
+int base_sub(const s21_big_decimal *value_1, const s21_big_decimal *value_2, s21_big_decimal *result){
   int borrow = 0;
   for (int i = 0; i < 224; i++) {
     int num1 = get_bit_big(value_1, i);
@@ -79,38 +79,49 @@ int base_sub(const big_decimal *value_1, const big_decimal *value_2, big_decimal
   return 0;
 }
 
-int base_mull(big_decimal *value_1, big_decimal *value_2, big_decimal *result){
+int base_mull(s21_big_decimal *value_1, s21_big_decimal *value_2, s21_big_decimal *result){
     for (int i = 0; i < 224; i++) {
         int num = get_bit_big(value_1, i);
         if (num) {
-            shift_left(value_2, &i);
+            s21_big_decimal tmp = *value_2;
+            shift_left(&tmp, i);
             base_add(result, value_2, result); //??????? все норм если изменить в самой base_add работать над конвертируемыми числами и уже в конце записывать результат
         }
     }
     return 0;
 }
 
-void shift_left(big_decimal* decimal, const int* index) {
-    int word_shift = *index / 32;
-    int index_shift = *index % 32;
-    for (int i = 6; i >= 0; i--) {
-        if (i - word_shift >= 0 && word_shift > 0){
-            decimal->bits[i] |= decimal->bits[i - word_shift];
-        } else {
-            decimal->bits[i] &= 0u;
+int shift_left(s21_big_decimal* decimal, int index) {
+    unsigned overflow = 0;
+
+    int word_shift = index / 32;
+    int index_shift = index % 32;
+
+    for (int i = 6; i >= 0 && !overflow && word_shift; i--) {
+        if (i - word_shift >= 0){
+            if (decimal->bits[i]) overflow = 1;
+            else {
+                decimal->bits[i] |= decimal->bits[i - word_shift];
+                decimal->bits[i - word_shift] &= 0u;
+            }
         }
     }
-    for (int i = 6; i >=0; i--){
+    for (int i = 0; i < index_shift && !overflow; i++) {
+        if (get_bit_big(decimal, 223 - i)) overflow = 1;
+    }
+
+    for (int i = 6; i >=0 && !overflow; i--){
         decimal->bits[i] <<= index_shift;
         if (i - 1 >= 0) {
             decimal->bits[i] |= (decimal->bits[i - 1] >> (32 - index_shift));
         }
     }
+    return overflow; 
 }
 
-void shift_right(big_decimal* decimal, const int* index) {
-    int word_shift = *index / 32;
-    int index_shift = *index % 32;
+void shift_right(s21_big_decimal* decimal, int index) {
+    int word_shift = index / 32;
+    int index_shift = index % 32;
     for (int i = 0; i < 7; i++) {
         decimal->bits[i] &= 0u;
         decimal->bits[i] &= decimal->bits[i + word_shift];
@@ -125,23 +136,30 @@ void shift_right(big_decimal* decimal, const int* index) {
     }
 }
 
-void to_big_decimal(const s21_decimal* decimal, big_decimal* big_decimal) {
+void to_big_decimal(const s21_decimal* decimal, s21_big_decimal* big_decimal) {
     for (int i = 0; i < 3; i++) {
         big_decimal->bits[i] &= decimal->bits[i];
     }
     big_decimal->scale &= get_scale(decimal);
 }
 
-void big_to_decimal(const big_decimal* big_decimal, s21_decimal* decimal){
+void big_to_decimal(const s21_big_decimal* big_decimal, s21_decimal* decimal){
     for (int i = 0; i < 3; i++) {
         decimal->bits[i] &= big_decimal->bits[i];
     }
     decimal->bits[3] |= big_decimal->scale << 16;
 }
 
-void init_big_decimal(big_decimal *decimal) {
+void init_big_decimal(s21_big_decimal *decimal) {
     for (int i = 0; i < 7; i++){
         decimal->bits[i] = 0u;
     }
     decimal->scale = 0u;
 }
+
+// void s21_normalization(s21_big_decimal* value_1, s21_big_decimal* value_2) {
+// }
+
+// void mull_10(s21_big_decimal* big_decimal) {
+
+// }
