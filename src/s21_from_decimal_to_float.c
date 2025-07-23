@@ -8,12 +8,18 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst){
     int sign = get_sign(&src);
      int scale = get_scale(&src);
 
-     if(scale < 0 || scale > MAX_SCALE){
+     int check_bit = check_free_decimal_bit(src);
+
+     if(scale < 0 || scale > MAX_SCALE || check_bit){
         exit_code = 1;
     }
 
     if(!exit_code){
-        double res = src.bits[0] + src.bits[1]*pow(2,32) + src.bits[2]*pow(2,64);
+
+        unsigned int low = src.bits[0];
+        unsigned int mid = src.bits[1];
+        unsigned int high = src.bits[2];
+        double res = (double)low + (double)mid * POW_2_32 + (double)high * POW_2_64;
         if(sign){
             res = -res;
         }

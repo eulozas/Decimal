@@ -21,7 +21,6 @@ int get_scale(const s21_decimal *decimal);
 double bank_round(double x);
 int count_digits_before_point(unsigned long long n);
 int find_point_index(double x);
-//void round_to_significant_digits(double *x, int n);
 void normalize_mantissa(unsigned long long *mantissa, int *scale);
 void mul_decimal_by_10_and_carry_bits(s21_decimal *decimal);
 void write_mantissa_to_decimal(unsigned long long mantissa, s21_decimal *decimal);
@@ -37,5 +36,6 @@ void big_to_decimal(const big_decimal* big_decimal, s21_decimal* decimal);
 void init_big_decimal(big_decimal *decimal);
 void shift_right(big_decimal* decimal, const int* index);
 void shift_left(big_decimal* decimal, const int* index);
+int check_free_decimal_bit(s21_decimal decimal);
 
 #endif

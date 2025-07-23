@@ -136,7 +136,6 @@ double bank_round(double x) {
 }
 
 int find_point_index(double x) {
-    if (x == 0.0) return 0;
     x = fabs(x);
     int index = 0;
 
@@ -144,23 +143,8 @@ int find_point_index(double x) {
         x /= 10.0;
         index++;
     }
-    // while (x < 1.0) {
-    //     x *= 10.0;
-    //     index--;
-    // }
-
     return index;
 }
-
-// void round_to_significant_digits(double *x, int n) {
-//     if (*x == 0.0) return;
-//     double abs_x = fabs(*x);
-//     int order = decimal_order(abs_x);
-//     double scale = pow(10.0, n - 1 - order);
-//     double scaled = *x * scale;
-//     double rounded = bank_round(scaled);
-//     *x = rounded / scale;
-// }
 
 void normalize_mantissa(unsigned long long *mantissa, int *scale) {
     while (*scale > 0 && (*mantissa % 10 == 0)) {
@@ -198,6 +182,22 @@ void divide_by_10(unsigned int *high, unsigned int *mid, unsigned int *low) {
 
     value = ((unsigned long long)(*low)) + (rest << 32);
     *low = (unsigned int)(value / 10);
+}
+
+int check_free_decimal_bit(s21_decimal decimal){
+    int res = 0;
+    for(int i = 96; i < 112 && !res; i++){
+        if(get_bit(&decimal, i)){
+            res = 1;
+        }
+    }
+    for(int i = 120; i < 127 && !res; i++){
+        if(get_bit(&decimal, i)){
+            res = 1;
+        }
+    }
+
+    return res;
 }
 
 // int main() {

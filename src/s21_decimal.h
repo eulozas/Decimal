@@ -6,6 +6,8 @@
 #define MAX_SCALE 28
 #define SIGNIF_DIGITS 7
 #define MAX_INT 2147483647
+#define POW_2_32 4294967296.0
+#define POW_2_64 18446744073709551616.0
 
 typedef struct{
     unsigned int bits[4];

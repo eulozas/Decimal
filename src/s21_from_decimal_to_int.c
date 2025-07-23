@@ -6,7 +6,9 @@ int s21_from_decimal_to_int(s21_decimal src, int *dst){
     int exit_code = 0;
     int sign = get_sign(&src);
     int scale = get_scale(&src);
-    if(scale < 0 || scale > MAX_SCALE){
+    int check_bit = check_free_decimal_bit(src);
+
+     if(scale < 0 || scale > MAX_SCALE || check_bit){
         exit_code = 1;
     }
     if(!exit_code){

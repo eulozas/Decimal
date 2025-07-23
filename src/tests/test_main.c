@@ -4,11 +4,12 @@
 Suite *from_float_to_decimal(void);
 Suite *from_int_to_decimal(void);
 Suite *from_decimal_to_int(void);
+Suite *from_decimal_to_float(void);
 
 //Потом убрать этот блок
 // Suite *from_decimal_to_int_suite1(void);
 // Suite *from_decimal_to_int_suite2(void);
- //Suite *from_decimal_to_int_suite3(void);
+//  Suite *from_decimal_to_int_suite3(void);
 // Suite *from_decimal_to_int_suite4(void);
 
 // Suite *from_decimal_to_float_suite1(void);
@@ -37,6 +38,7 @@ int main(void) {
   SRunner *sr = srunner_create(from_float_to_decimal());
   srunner_add_suite(sr, from_int_to_decimal());
   srunner_add_suite(sr, from_decimal_to_int());
+  srunner_add_suite(sr, from_decimal_to_float());
 
 
   //Потом убрать этот блок
