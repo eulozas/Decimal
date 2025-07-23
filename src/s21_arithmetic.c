@@ -5,21 +5,22 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     big_decimal big_value_1 = {0}, big_value_2 = {0}, big_result = {0};
     to_big_decimal(&value_1, &big_value_1);
     to_big_decimal(&value_2, &big_value_2);
-    to_big_decimal(&result, &big_result);
+    to_big_decimal(result, &big_result);
     if (get_sign(&value_1) == get_sign(&value_2)) {
         set_bit(result, 127, get_sign(&value_1));
         base_add(&big_value_1, &big_value_2, &big_result);
     } else {
         if (s21_is_greater(value_1, value_2)) {
-            set_bit(&result, 127, get_sign(&value_1));
+            set_bit(result, 127, get_sign(&value_1));
             base_sub(&big_value_1, &big_value_2, &big_result);
         } else if (s21_is_equal(value_1, value_2)) {
-            to_zero(&result);
+            to_zero(result);
         } else {
-            set_bit(&result, 127, get_sign(&value_2));
-            base_sub(&value_2, &value_1, result);
+            set_bit(result, 127, get_sign(&value_2));
+            base_sub(&big_value_2, &big_value_1, &big_result);
         }
     } 
+    big_to_decimal(&big_result, result);
     return 0;
 }
 
@@ -31,58 +32,62 @@ int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 
 int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     big_decimal temp_value_1 = {0}, temp_value_2 = {0}, temp_result = {0};
+    to_big_decimal(&value_1, &temp_value_1);
+    to_big_decimal(&value_2, &temp_value_2);
+    to_big_decimal(result, &temp_result);
     base_mull(&temp_value_1, &temp_value_2, &temp_result);
     big_to_decimal(&temp_result, result);
     return 0;
 }
 
-int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-    int q = 0;
-    int tmp_shift = 1;
-    big_decimal digit = {0};
-    digit.bits[0] = 1u;
-    while (s21_is_less_or_equal(value_2, value_1)) {
-        big_decimal temp_value_1 = {0}, temp_value_2 = {0}, temp_result = {0};
-        to_big_decimal(&value_1, &temp_value_1);
-        to_big_decimal(&value_2, &temp_value_2);
-        shift_left(&digit, &tmp_shift);
-        base_mull(&temp_value_2, &digit, &temp_result);
-    }
-    return 0;
-}
+// int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
+//     int q = 0;
+//     int tmp_shift = 1;
+//     big_decimal digit = {0};
+//     digit.bits[0] = 1u;
+//     while (s21_is_less_or_equal(value_2, value_1)) {
+//         big_decimal temp_value_1 = {0}, temp_value_2 = {0}, temp_result = {0};
+//         to_big_decimal(&value_1, &temp_value_1);
+//         to_big_decimal(&value_2, &temp_value_2);
+//         shift_left(&digit, &tmp_shift);
+//         base_mull(&temp_value_2, &digit, &temp_result);
+//     }
+//     return 0;
+// }
 
 int base_add(const big_decimal *value_1, const big_decimal *value_2, big_decimal *result) {
     int carry = 0;
     for (int i = 0; i < 224; i++) {
-        int num1 = get_bit(value_1, i);
-        int num2 = get_bit(value_2, i);
+        int num1 = get_bit_big(value_1, i);
+        int num2 = get_bit_big(value_2, i);
         set_bit_big(result, i, num1 ^ num2 ^ carry);
         carry = (num1 & num2) | (num1 & carry) | (num2 & carry);
     }
     if (carry) return 1;
     //возможно нормализовать нужно
-    big_to_decimal(&result, result);
     return 0;
 }
 
 int base_sub(const big_decimal *value_1, const big_decimal *value_2, big_decimal *result){
   int borrow = 0;
   for (int i = 0; i < 224; i++) {
-    int num1 = get_bit(value_1, i);
-    int num2 = get_bit(value_2, i);
+    int num1 = get_bit_big(value_1, i);
+    int num2 = get_bit_big(value_2, i);
     set_bit_big(result, i, borrow ^ num1 ^ num2);
     borrow = ((~num1 & 1u) & num2) | (borrow & (~num1 & 1u)) | (borrow & num1 & num2);
   }
+  return 0;
 }
 
-int base_mull(const big_decimal *value_1, const big_decimal *value_2, big_decimal *result){
+int base_mull(big_decimal *value_1, big_decimal *value_2, big_decimal *result){
     for (int i = 0; i < 224; i++) {
-        int num = get_bit(&value_1, i);
+        int num = get_bit_big(value_1, i);
         if (num) {
-            shift_left(value_2, i);
+            shift_left(value_2, &i);
             base_add(result, value_2, result); //??????? все норм если изменить в самой base_add работать над конвертируемыми числами и уже в конце записывать результат
         }
     }
+    return 0;
 }
 
 void shift_left(big_decimal* decimal, const int* index) {
@@ -96,7 +101,7 @@ void shift_left(big_decimal* decimal, const int* index) {
         }
     }
     for (int i = 6; i >=0; i--){
-        decimal->bits[i] << index_shift;
+        decimal->bits[i] <<= index_shift;
         if (i - 1 >= 0) {
             decimal->bits[i] |= (decimal->bits[i - 1] >> (32 - index_shift));
         }
@@ -112,7 +117,7 @@ void shift_right(big_decimal* decimal, const int* index) {
     }
     if (index_shift > 0) {
         for (int i = 0; i < 7; i++) {
-            decimal->bits[i] >> index_shift;
+            decimal->bits[i] >>= index_shift;
             if (i + 1 >= 0) {
                 decimal->bits[i] |= (decimal->bits[i + 1] << (32 - index_shift));
             }

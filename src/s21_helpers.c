@@ -18,6 +18,14 @@ int get_bit(const s21_decimal *decimal, int index){
     return (decimal->bits[bit_number] >> bit_index) & 1u;
 }
 
+int get_bit_big(const big_decimal *decimal, int index){
+    if (!decimal || index < 0 || index > 224) return 0;//?????
+    int bit_index = index % 32;
+    int bit_number = index / 32;
+
+    return (decimal->bits[bit_number] >> bit_index) & 1u;
+}
+
 void set_bit(s21_decimal *decimal, int index, int val){
     if (!decimal || index < 0 || index > 127) return;//см по покрытию и логике далее нужно ли это? и ретерн надо изменить на другое значение
 
