@@ -200,29 +200,34 @@ int check_free_decimal_bit(s21_decimal decimal){
     return res;
 }
 
+void increment_decimal_bits(unsigned int *low, unsigned int *mid, unsigned int *high) {
+    if (++(*low) == 0) { // произошло переполнение low
+        if (++(*mid) == 0) { // переполнение mid
+            ++(*high); // прибавляем к high
+        }
+    }
+}
+
 // int main() {
 
-//  // 0.0000003280549
-// //s21_decimal decimal = {{0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0x001C0000}};
-// // int x;
-// // s21_from_decimal_to_int(decimal, &x);
-// float b = 2123.239;
-// printf("%.20f\n", b);
-// s21_decimal decimal;
-// s21_from_float_to_decimal(b, &decimal);
+//     s21_decimal decimal;
+//     float a = -1234.5;
+//     s21_from_float_to_decimal(a, &decimal);
 
-// printf("decimal scale %d\n", decimal.bits[3]>>16 & 0xFF);
-// printf("decimal low %u\n", decimal.bits[0]);
-// printf("decimal mid %u\n", decimal.bits[1]);
-// printf("decimal high %u\n", decimal.bits[2]);
-// float a;
-// s21_from_decimal_to_float(decimal, &a);
+//     printf("decimal scale %d\n", decimal.bits[3]>>16 & 0xFF);
+//     printf("decimal low %u\n", decimal.bits[0]);
+//     printf("decimal mid %u\n", decimal.bits[1]);
+//     printf("decimal high %u\n", decimal.bits[2]);
 
-// printf("%.20f\n", a);
+//     s21_decimal decimal_res = {{0,0,0,0}};
 
+//     s21_floor(decimal, &decimal_res);
 
+//     printf("decimal scale %d\n", decimal_res.bits[3]>>16 & 0xFF);
+//     printf("decimal low %u\n", decimal_res.bits[0]);
+//     printf("decimal mid %u\n", decimal_res.bits[1]);
+//     printf("decimal high %u\n", decimal_res.bits[2]);
 
-// //printf("int %d\n", x);
 
 // return 0;
 // }

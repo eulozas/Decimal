@@ -37,5 +37,6 @@ void init_big_decimal(big_decimal *decimal);
 void shift_right(big_decimal* decimal, const int* index);
 void shift_left(big_decimal* decimal, const int* index);
 int check_free_decimal_bit(s21_decimal decimal);
+void increment_decimal_bits(unsigned int *low, unsigned int *mid, unsigned int *high);
 
 #endif
