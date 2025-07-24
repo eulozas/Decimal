@@ -2,14 +2,15 @@
 #include "s21_helpers.h"
 
 int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-    // int sign1 = get_sign(&value_1);
-    // int sign2 = get_sign(&value_2);
+    int sign1 = get_sign(&value_1);
+    int sign2 = get_sign(&value_2);
     s21_big_decimal big_value_1 = {0}, big_value_2 = {0}, big_result = {0};
     to_big_decimal(&value_1, &big_value_1);
     to_big_decimal(&value_2, &big_value_2);
     to_big_decimal(result, &big_result);
-    if (get_sign(&value_1) == get_sign(&value_2)) {
-        set_bit(result, 127, get_sign(&value_1));
+    s21_normalization_big_scale(&value_1, &value_2); //может подаваться на вход больше 28
+    if (sign1 == sign2) {
+        set_bit(result, 127, sign1);
         base_add(&big_value_1, &big_value_2, &big_result);
     } else {
         if (s21_is_greater(value_1, value_2)) {
@@ -157,9 +158,42 @@ void init_big_decimal(s21_big_decimal *decimal) {
     decimal->scale = 0u;
 }
 
-// void s21_normalization(s21_big_decimal* value_1, s21_big_decimal* value_2) {
-// }
+void s21_normalization_big_scale(s21_big_decimal* value_1, s21_big_decimal* value_2) {
+    while (value_1->scale > value_2->scale) {
+        mul_10_value(value_2);
+    }
+    while (value_2->scale > value_1->scale) {
+        mul_10_value(value_1);
+    }
+}
 
-// void mull_10(s21_big_decimal* big_decimal) {
+void mull_10_big_decimal(s21_big_decimal* big_decimal) {
+    s21_big_decimal tmp = *big_decimal;
+    shift_left(&tmp, 3);
+    shift_left(big_decimal, 1);
+    base_add(big_decimal, &tmp, big_decimal);
+    big_decimal->scale++;
+}
 
-// }
+int mantissa_96_bit(s21_big_decimal* big_decimal) {
+    int ret = 0;
+    for (int i = 3; i < 7 && !ret; i++) {
+        if (big_decimal->bits[i] != 0u) ret = 1;
+    }
+    return ret;
+}
+
+void div_10_big_decimal(s21_big_decimal* big_decimal) {
+    unsigned long long remainder = 0;
+    for (int i = 6; i > 0; i--) {
+        unsigned long long current = (unsigned)(big_decimal->bits[i] | (remainder << 32));
+        big_decimal->bits[i] = (unsigned)(current / 10);
+        remainder = current % 10;
+    }
+    if (remainder > 5 || (remainder == 5 && (big_decimal->bits[0] & 1u))) {
+        s21_big_decimal tmp;
+        init_big_decimal(&tmp);
+        tmp.bits[0] |= 1u;
+        base_add(big_decimal, &tmp, big_decimal);
+    }
+}

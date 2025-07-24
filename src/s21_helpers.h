@@ -40,5 +40,8 @@ void shift_right(s21_big_decimal* decimal, int index);
 int shift_left(s21_big_decimal* decimal, int index);
 int get_bit_big(const s21_big_decimal *decimal, int index);
 void set_bit_big(s21_big_decimal *decimal, int index, int val);
+void mull_10_big_decimal(s21_big_decimal* big_decimal);
+void s21_normalization_big_scale(s21_big_decimal* value_1, s21_big_decimal* value_2);
+int mantissa_96_bit(s21_big_decimal* big_decimal);
 
 #endif
