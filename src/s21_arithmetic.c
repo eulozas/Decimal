@@ -144,11 +144,25 @@ void to_big_decimal(const s21_decimal* decimal, s21_big_decimal* big_decimal) {
     big_decimal->scale &= get_scale(decimal);
 }
 
-void big_to_decimal(const s21_big_decimal* big_decimal, s21_decimal* decimal){
-    for (int i = 0; i < 3; i++) {
-        decimal->bits[i] &= big_decimal->bits[i];
+int big_to_decimal(const s21_big_decimal* big_decimal, s21_decimal* decimal){
+    int code_error = 0;
+    while (mantissa_96_bit && code_error == 0) {
+        if (big_decimal->scale > 0) {
+            div_10_big_decimal(big_decimal);
+        } else if (get_sign(decimal)) code_error = 2;
+        else code_error = 1;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     = 1;
     }
-    decimal->bits[3] |= big_decimal->scale << 16;
+    while (big_decimal->scale > 28 && code_error == 0) {
+        div_10_big_decimal(big_decimal);
+        if (is_zero_big_decimal(big_decimal)) code_error = 2;
+    }
+    if (code_error == 0) {
+        for (int i = 0; i < 3; i++) {
+            decimal->bits[i] &= big_decimal->bits[i];
+        }
+        decimal->bits[3] |= big_decimal->scale << 16;
+    }
+    return code_error;
 }
 
 void init_big_decimal(s21_big_decimal *decimal) {
@@ -195,5 +209,14 @@ void div_10_big_decimal(s21_big_decimal* big_decimal) {
         init_big_decimal(&tmp);
         tmp.bits[0] |= 1u;
         base_add(big_decimal, &tmp, big_decimal);
+        big_decimal->scale--;
     }
+}
+
+int is_zero_big_decimal(s21_big_decimal* big_decimal) {
+    int ret = 1;
+    for (int i = 0; i < 7 && ret; i++){
+        if (big_decimal->bits[i] != 0u) ret = 0;
+    }
+    return ret;
 }
