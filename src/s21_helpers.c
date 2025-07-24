@@ -67,21 +67,24 @@ int get_scale(const s21_decimal *decimal){
     return (decimal->bits[3] >> 16) & 0xFF;
 }
 
-void mul_10_value(s21_decimal* value_1){
+void mul_10_value(big_decimal* value_1){
     int overflow = 0;
 
-    for(int i = 0; i < 3; i++){
+    for(int i = 0; i < 7; i++){
         uint64_t buffer = (uint64_t)value_1->bits[i] * 10 + overflow;
         value_1->bits[i] = (uint32_t)buffer & 0xFFFFFFFF;
         overflow = buffer >> 32;
     }
-
-    if(overflow != 0){//
-        //переполнение
-    }
 }
 
-void make_same_scales(s21_decimal* value_1, int* scale_value_1, int* scale_value_2){
+void to_big_decimal(const s21_decimal* decimal, big_decimal* big_decimal) {
+    for (int i = 0; i < 3; i++) {
+        big_decimal->bits[i] = decimal->bits[i];
+    }
+    big_decimal->scale = get_scale(decimal);
+}
+
+void make_same_scales(big_decimal* value_1, int* scale_value_1, int* scale_value_2){
     while(*scale_value_1 < *scale_value_2){
         mul_10_value(value_1);
         (*scale_value_1)++;
@@ -202,27 +205,16 @@ int check_free_decimal_bit(s21_decimal decimal){
 
 // int main() {
 
-//  // 0.0000003280549
-// //s21_decimal decimal = {{0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0x001C0000}};
-// // int x;
-// // s21_from_decimal_to_int(decimal, &x);
-// float b = 2123.239;
-// printf("%.20f\n", b);
-// s21_decimal decimal;
-// s21_from_float_to_decimal(b, &decimal);
+//     // s21_decimal decimal1 = {{0xAAAAAAAA, 0xAAAAAAAA, 0xAAAAAAAA, 0x10000}};
+//     // // 5281877500950955839569596689
+//     // s21_decimal decimal2 = {{0x11111111, 0x11111111, 0x11111111, 0x0}};
 
-// printf("decimal scale %d\n", decimal.bits[3]>>16 & 0xFF);
-// printf("decimal low %u\n", decimal.bits[0]);
-// printf("decimal mid %u\n", decimal.bits[1]);
-// printf("decimal high %u\n", decimal.bits[2]);
-// float a;
-// s21_from_decimal_to_float(decimal, &a);
-
-// printf("%.20f\n", a);
+//     // printf("%d\n", s21_is_less(decimal1, decimal2));
 
 
+//     s21_decimal a = {{1000, 0, 0, 1 << 16}};  // 100.0
+//     s21_decimal b = {{10000, 0, 0, 2 << 16}}; // 100.00
+//     printf("%d\n", s21_is_equal(a, b));
 
-// //printf("int %d\n", x);
-
-// return 0;
+//     return 0;
 // }

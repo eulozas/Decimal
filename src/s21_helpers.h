@@ -27,8 +27,8 @@ void write_mantissa_to_decimal(unsigned long long mantissa, s21_decimal *decimal
 void divide_by_10(unsigned int *high, unsigned int *mid, unsigned int *low);
 int base_add(const s21_decimal *value_1, const s21_decimal *value_2, s21_decimal *result);
 int base_sub(const s21_decimal *value_1, const s21_decimal *value_2, s21_decimal *result);
-void mul_10_value(s21_decimal* value_1);
-void make_same_scales(s21_decimal* value_1, int* scale_value_1, int* scale_value_2);
+void mul_10_value(big_decimal* value_1);
+void make_same_scales(big_decimal* value_1, int* scale_value_1, int* scale_value_2);
 int is_zero(const s21_decimal* decimal);
 void to_zero(s21_decimal* decimal);
 void to_big_decimal(const s21_decimal* decimal, big_decimal* big_decimal);

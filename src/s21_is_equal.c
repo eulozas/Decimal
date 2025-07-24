@@ -13,23 +13,28 @@ int s21_is_equal(s21_decimal value_1, s21_decimal value_2){
     }
     else if(sign_value_1 == sign_value_2){
         result = 1;
+        big_decimal big_value_1 = {0}, big_value_2 = {0};
+        to_big_decimal(&value_1, &big_value_1);
+        to_big_decimal(&value_2, &big_value_2);
         if(scale_value_1 != scale_value_2){
             if(scale_value_1 < scale_value_2){
-                make_same_scales(&value_1, &scale_value_1, &scale_value_2);
+                make_same_scales(&big_value_1, &scale_value_1, &scale_value_2);
             }
             else{
-                make_same_scales(&value_2, &scale_value_2, &scale_value_1);
+                make_same_scales(&big_value_2, &scale_value_2, &scale_value_1);
             }
         }
-        for(int i = 0; i < 3; i++){
-            if(value_1.bits[i] != value_2.bits[i]){
+        for(int i = 6; i >= 0; i--){
+            if(big_value_1.bits[i] != big_value_2.bits[i]){
                 result = 0;
+                break;
             }
         }
     }
     else{
         result = 0;
     }
+
 
     return result;
 }
