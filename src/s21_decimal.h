@@ -14,7 +14,7 @@ typedef struct{
 typedef struct{
     unsigned bits[7];
     unsigned scale;
-} s21_big_decimal;
+} big_decimal;
 
 
 int s21_from_int_to_decimal(int src, s21_decimal *dst);

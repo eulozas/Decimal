@@ -7,7 +7,7 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     else {
         int sign1 = get_sign(&value_1);
         int sign2 = get_sign(&value_2);
-        s21_big_decimal big_value_1 = {0}, big_value_2 = {0}, big_result = {0};
+        big_decimal big_value_1 = {0}, big_value_2 = {0}, big_result = {0};
         to_big_decimal(&value_1, &big_value_1);
         to_big_decimal(&value_2, &big_value_2);
         s21_normalization_big_scale(&big_value_1, &big_value_2);
@@ -43,7 +43,7 @@ int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     int sign1 = get_sign(&value_1);
     int sign2 = get_sign(&value_2);
     set_bit(result, 127, sign1 ^ sign2);
-    s21_big_decimal temp_value_1 = {0}, temp_value_2 = {0}, temp_result = {0};
+    big_decimal temp_value_1 = {0}, temp_value_2 = {0}, temp_result = {0};
     to_big_decimal(&value_1, &temp_value_1);
     to_big_decimal(&value_2, &temp_value_2);
     to_big_decimal(result, &temp_result);
@@ -67,7 +67,7 @@ int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 //     return 0;
 // }
 
-int base_add(const s21_big_decimal *value_1, const s21_big_decimal *value_2, s21_big_decimal *result) {
+int base_add(const big_decimal *value_1, const big_decimal *value_2, big_decimal *result) {
     int carry = 0;
     for (int i = 0; i < 224; i++) {
         int num1 = get_bit_big(value_1, i);
@@ -78,7 +78,7 @@ int base_add(const s21_big_decimal *value_1, const s21_big_decimal *value_2, s21
     return carry;
 }
 
-int base_sub(const s21_big_decimal *value_1, const s21_big_decimal *value_2, s21_big_decimal *result){
+int base_sub(const big_decimal *value_1, const big_decimal *value_2, big_decimal *result){
   int borrow = 0;
   for (int i = 0; i < 224; i++) {
     int num1 = get_bit_big(value_1, i);
@@ -89,11 +89,11 @@ int base_sub(const s21_big_decimal *value_1, const s21_big_decimal *value_2, s21
   return 0;
 }
 
-int base_mull(s21_big_decimal *value_1, s21_big_decimal *value_2, s21_big_decimal *result){
+int base_mull(big_decimal *value_1, big_decimal *value_2, big_decimal *result){
     for (int i = 0; i < 224; i++) {
         int num = get_bit_big(value_1, i);
         if (num) {
-            s21_big_decimal tmp = *value_2;
+            big_decimal tmp = *value_2;
             shift_left(&tmp, i);
             base_add(result, value_2, result); //??????? все норм если изменить в самой base_add работать над конвертируемыми числами и уже в конце записывать результат
         }
@@ -101,7 +101,7 @@ int base_mull(s21_big_decimal *value_1, s21_big_decimal *value_2, s21_big_decima
     return 0;
 }
 
-int shift_left(s21_big_decimal* decimal, int index) {
+int shift_left(big_decimal* decimal, int index) {
     unsigned overflow = 0;
 
     int word_shift = index / 32;
@@ -129,7 +129,7 @@ int shift_left(s21_big_decimal* decimal, int index) {
     return overflow; 
 }
 
-void shift_right(s21_big_decimal* decimal, int index) {
+void shift_right(big_decimal* decimal, int index) {
     int word_shift = index / 32;
     int index_shift = index % 32;
     for (int i = 0; i < 7; i++) {
@@ -146,43 +146,43 @@ void shift_right(s21_big_decimal* decimal, int index) {
     }
 }
 
-void to_big_decimal(const s21_decimal* decimal, s21_big_decimal* big_decimal) {
+void to_big_decimal(const s21_decimal* decimal, big_decimal* b_decimal) {
     for (int i = 0; i < 3; i++) {
-        big_decimal->bits[i] &= decimal->bits[i];
+        b_decimal->bits[i] &= decimal->bits[i];
     }
-    big_decimal->scale &= get_scale(decimal);
+    b_decimal->scale &= get_scale(decimal);
 }
 
-int big_to_decimal(s21_big_decimal* big_decimal, s21_decimal* decimal){
+int big_to_decimal(big_decimal* b_decimal, s21_decimal* decimal){
     int code_error = 0;
-    while (mantissa_96_bit(big_decimal) && code_error == 0) {
-        if (big_decimal->scale > 0) {
-            div_10_big_decimal(big_decimal);
+    while (mantissa_96_bit(b_decimal) && code_error == 0) {
+        if (b_decimal->scale > 0) {
+            div_10_big_decimal(b_decimal);
         } else if (get_sign(decimal)) {
             code_error = 2;
         } else code_error = 1;
     }
-    while (big_decimal->scale > 28 && code_error == 0) {
-        div_10_big_decimal(big_decimal);
-        if (is_zero_big_decimal(big_decimal)) code_error = 2;
+    while (b_decimal->scale > 28 && code_error == 0) {
+        div_10_big_decimal(b_decimal);
+        if (is_zero_big_decimal(b_decimal)) code_error = 2;
     }
     if (code_error == 0) {
         for (int i = 0; i < 3; i++) {
-            decimal->bits[i] &= big_decimal->bits[i];
+            decimal->bits[i] &= b_decimal->bits[i];
         }
-        decimal->bits[3] |= big_decimal->scale << 16;
+        decimal->bits[3] |= b_decimal->scale << 16;
     }
     return code_error;
 }
 
-void init_big_decimal(s21_big_decimal *decimal) {
+void init_big_decimal(big_decimal *decimal) {
     for (int i = 0; i < 7; i++){
         decimal->bits[i] = 0u;
     }
     decimal->scale = 0u;
 }
 
-void s21_normalization_big_scale(s21_big_decimal* value_1, s21_big_decimal* value_2) {
+void s21_normalization_big_scale(big_decimal* value_1, big_decimal* value_2) {
     while (value_1->scale > value_2->scale) {
         mull_10_big_decimal(value_2);
     }
@@ -191,42 +191,42 @@ void s21_normalization_big_scale(s21_big_decimal* value_1, s21_big_decimal* valu
     }
 }
 
-void mull_10_big_decimal(s21_big_decimal* big_decimal) {
-    s21_big_decimal tmp = *big_decimal;
+void mull_10_big_decimal(big_decimal* b_decimal) {
+    big_decimal tmp = *b_decimal;
     shift_left(&tmp, 3);
-    shift_left(big_decimal, 1);
-    base_add(big_decimal, &tmp, big_decimal);
-    big_decimal->scale++;
+    shift_left(b_decimal, 1);
+    base_add(b_decimal, &tmp, b_decimal);
+    b_decimal->scale++;
 }
 
-int mantissa_96_bit(const s21_big_decimal* big_decimal) {
+int mantissa_96_bit(const big_decimal* b_decimal) {
     int ret = 0;
     for (int i = 3; i < 7 && ret == 0; i++) {
-        if (big_decimal->bits[i] != 0u) ret = 1;
+        if (b_decimal->bits[i] != 0u) ret = 1;
     }
     return ret;
 }
 
-void div_10_big_decimal(s21_big_decimal* big_decimal) {
+void div_10_big_decimal(big_decimal* b_decimal) {
     unsigned long long remainder = 0;
     for (int i = 6; i > 0; i--) {
-        unsigned long long current = (unsigned)(big_decimal->bits[i] | (remainder << 32));
-        big_decimal->bits[i] = (unsigned)(current / 10);
+        unsigned long long current = (unsigned)(b_decimal->bits[i] | (remainder << 32));
+        b_decimal->bits[i] = (unsigned)(current / 10);
         remainder = current % 10;
     }
-    if (remainder > 5 || (remainder == 5 && (big_decimal->bits[0] & 1u))) {
-        s21_big_decimal tmp;
+    if (remainder > 5 || (remainder == 5 && (b_decimal->bits[0] & 1u))) {
+        big_decimal tmp;
         init_big_decimal(&tmp);
         tmp.bits[0] |= 1u;
-        base_add(big_decimal, &tmp, big_decimal);
-        big_decimal->scale--;
+        base_add(b_decimal, &tmp, b_decimal);
+        b_decimal->scale--;
     }
 }
 
-int is_zero_big_decimal(s21_big_decimal* big_decimal) {
+int is_zero_big_decimal(big_decimal* b_decimal) {
     int ret = 1;
     for (int i = 0; i < 7 && ret; i++){
-        if (big_decimal->bits[i] != 0u) ret = 0;
+        if (b_decimal->bits[i] != 0u) ret = 0;
     }
     return ret;
 }
