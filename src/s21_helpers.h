@@ -34,7 +34,7 @@ void make_same_scales(s21_decimal* value_1, int* scale_value_1, int* scale_value
 int is_zero(const s21_decimal* decimal);
 void to_zero(s21_decimal* decimal);
 void to_big_decimal(const s21_decimal* decimal, s21_big_decimal* s21_big_decimal);
-int big_to_decimal(const s21_big_decimal* s21_big_decimal, s21_decimal* decimal);
+int big_to_decimal(s21_big_decimal* s21_big_decimal, s21_decimal* decimal);
 void init_big_decimal(s21_big_decimal *decimal);
 void shift_right(s21_big_decimal* decimal, int index);
 int shift_left(s21_big_decimal* decimal, int index);
@@ -42,7 +42,8 @@ int get_bit_big(const s21_big_decimal *decimal, int index);
 void set_bit_big(s21_big_decimal *decimal, int index, int val);
 void mull_10_big_decimal(s21_big_decimal* big_decimal);
 void s21_normalization_big_scale(s21_big_decimal* value_1, s21_big_decimal* value_2);
-int mantissa_96_bit(s21_big_decimal* big_decimal);
+int mantissa_96_bit(const s21_big_decimal* big_decimal);
 int is_zero_big_decimal(s21_big_decimal* big_decimal);
+void div_10_big_decimal(s21_big_decimal* big_decimal);
 
 #endif

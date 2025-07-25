@@ -8,7 +8,7 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     s21_big_decimal big_value_1 = {0}, big_value_2 = {0}, big_result = {0};
     to_big_decimal(&value_1, &big_value_1);
     to_big_decimal(&value_2, &big_value_2);
-    s21_normalization_big_scale(&value_1, &value_2); //может подаваться на вход больше 28??
+    s21_normalization_big_scale(&big_value_1, &big_value_2); //может подаваться на вход больше 28??
     if (sign1 == sign2) {
         set_bit(result, 127, sign1);
         base_add(&big_value_1, &big_value_2, &big_result);
@@ -146,13 +146,14 @@ void to_big_decimal(const s21_decimal* decimal, s21_big_decimal* big_decimal) {
     big_decimal->scale &= get_scale(decimal);
 }
 
-int big_to_decimal(const s21_big_decimal* big_decimal, s21_decimal* decimal){
+int big_to_decimal(s21_big_decimal* big_decimal, s21_decimal* decimal){
     int code_error = 0;
-    while (mantissa_96_bit && code_error == 0) {
+    while (mantissa_96_bit(big_decimal) && code_error == 0) {
         if (big_decimal->scale > 0) {
             div_10_big_decimal(big_decimal);
-        } else if (get_sign(decimal)) code_error = 2;
-        else code_error = 1;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     = 1;
+        } else if (get_sign(decimal)) {
+            code_error = 2;
+        } else code_error = 1;
     }
     while (big_decimal->scale > 28 && code_error == 0) {
         div_10_big_decimal(big_decimal);
@@ -176,10 +177,10 @@ void init_big_decimal(s21_big_decimal *decimal) {
 
 void s21_normalization_big_scale(s21_big_decimal* value_1, s21_big_decimal* value_2) {
     while (value_1->scale > value_2->scale) {
-        mul_10_value(value_2);
+        mull_10_big_decimal(value_2);
     }
     while (value_2->scale > value_1->scale) {
-        mul_10_value(value_1);
+        mull_10_big_decimal(value_1);
     }
 }
 
@@ -191,9 +192,9 @@ void mull_10_big_decimal(s21_big_decimal* big_decimal) {
     big_decimal->scale++;
 }
 
-int mantissa_96_bit(s21_big_decimal* big_decimal) {
+int mantissa_96_bit(const s21_big_decimal* big_decimal) {
     int ret = 0;
-    for (int i = 3; i < 7 && !ret; i++) {
+    for (int i = 3; i < 7 && ret == 0; i++) {
         if (big_decimal->bits[i] != 0u) ret = 1;
     }
     return ret;
