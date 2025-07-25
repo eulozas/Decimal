@@ -169,7 +169,8 @@ void write_mantissa_to_decimal(unsigned long long mantissa, s21_decimal *decimal
     decimal->bits[2] = 0;
 }
 
-void divide_by_10(unsigned int *high, unsigned int *mid, unsigned int *low) {
+int divide_by_10(unsigned int *high, unsigned int *mid, unsigned int *low) {
+    int has_fraction = 0;
     unsigned long long rest = 0;
 
     unsigned long long value = ((unsigned long long)(*high));
@@ -182,6 +183,9 @@ void divide_by_10(unsigned int *high, unsigned int *mid, unsigned int *low) {
 
     value = ((unsigned long long)(*low)) + (rest << 32);
     *low = (unsigned int)(value / 10);
+    if (value % 10 != 0) has_fraction = 1; // дробное, остаток был 
+
+    return has_fraction;
 }
 
 int check_free_decimal_bit(s21_decimal decimal){
@@ -208,18 +212,23 @@ void increment_decimal_bits(unsigned int *low, unsigned int *mid, unsigned int *
     }
 }
 
+
 // int main() {
 
-//     s21_decimal decimal;
-//     float a = -1234.5;
-//     s21_from_float_to_decimal(a, &decimal);
+//      // -5281877500950955839569596689.0
+//     s21_decimal decimal = {{0xAAAAAAAA, 0xAAAAAAAA, 0xAAAAAAAA, 0x80010000}};
 
 //     printf("decimal scale %d\n", decimal.bits[3]>>16 & 0xFF);
 //     printf("decimal low %u\n", decimal.bits[0]);
 //     printf("decimal mid %u\n", decimal.bits[1]);
 //     printf("decimal high %u\n", decimal.bits[2]);
 
-//     s21_decimal decimal_res = {{0,0,0,0}};
+//     s21_decimal decimal_res = {{0x11111111, 0x11111111, 0x11111111, 0x80000000}};
+
+//     // printf("decimal scale %d\n", decimal_res.bits[3]>>16 & 0xFF);
+//     // printf("decimal low %u\n", decimal_res.bits[0]);
+//     // printf("decimal mid %u\n", decimal_res.bits[1]);
+//     // printf("decimal high %u\n", decimal_res.bits[2]);
 
 //     s21_floor(decimal, &decimal_res);
 
