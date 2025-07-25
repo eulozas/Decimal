@@ -32,7 +32,6 @@ int s21_floor(s21_decimal value, s21_decimal *result){
             if(sign){
             if(has_fraction){
                 increment_decimal_bits(&low, &mid, &high); 
-                //low++;
             }       
             set_sign(result);
             }
