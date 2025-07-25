@@ -3,10 +3,10 @@
 
 int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     int res_add = 0;
-    int sign1 = get_sign(&value_1);
-    int sign2 = get_sign(&value_2);
     if (is_zero(&value_1) && is_zero(&value_2)) to_zero(result);
     else {
+        int sign1 = get_sign(&value_1);
+        int sign2 = get_sign(&value_2);
         s21_big_decimal big_value_1 = {0}, big_value_2 = {0}, big_result = {0};
         to_big_decimal(&value_1, &big_value_1);
         to_big_decimal(&value_2, &big_value_2);
@@ -40,6 +40,9 @@ int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 }
 
 int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
+    int sign1 = get_sign(&value_1);
+    int sign2 = get_sign(&value_2);
+    set_bit(result, 127, sign1 ^ sign2);
     s21_big_decimal temp_value_1 = {0}, temp_value_2 = {0}, temp_result = {0};
     to_big_decimal(&value_1, &temp_value_1);
     to_big_decimal(&value_2, &temp_value_2);
