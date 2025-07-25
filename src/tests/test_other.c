@@ -128,6 +128,60 @@ START_TEST(test_floor_7) {
 }
 END_TEST
 
+START_TEST(test_floor_8) {
+    //Decimal value:   -4294967295.1
+    s21_decimal decimal = {{0xFFFFFFF7, 0x00000009, 0, 0x80010000}};
+    s21_decimal decimal_res = {0};
+    //Decimal value:   -4294967296
+    s21_decimal decimal_check = {{0, 1, 0, 0x80000000}};
+   
+    int res = s21_floor(decimal, &decimal_res);
+    ck_assert_int_eq(0, res);
+    
+    ck_assert_uint_eq(decimal_res.bits[3]>>31 & 1u, decimal_check.bits[3]>>31 & 1u);
+    ck_assert_uint_eq(decimal_res.bits[3]>>16 & 0xFF, decimal_check.bits[3]>>16 & 0xFF);
+    ck_assert_uint_eq(decimal_res.bits[0], decimal_check.bits[0]);
+    ck_assert_uint_eq(decimal_res.bits[1], decimal_check.bits[1]);
+    ck_assert_uint_eq(decimal_res.bits[2], decimal_check.bits[2]);
+}
+END_TEST
+
+START_TEST(test_floor_9) {
+    //Decimal value:   -18446744073709551616.1
+    s21_decimal decimal = {{0x00000001, 0x00000000, 0x0000000A, 0x80010000}};
+    s21_decimal decimal_res = {0};
+    //Decimal value:   -18446744073709551617
+    s21_decimal decimal_check = {{1, 0, 1, 0x80000000}};
+   
+    int res = s21_floor(decimal, &decimal_res);
+    ck_assert_int_eq(0, res);
+    
+    ck_assert_uint_eq(decimal_res.bits[3]>>31 & 1u, decimal_check.bits[3]>>31 & 1u);
+    ck_assert_uint_eq(decimal_res.bits[3]>>16 & 0xFF, decimal_check.bits[3]>>16 & 0xFF);
+    ck_assert_uint_eq(decimal_res.bits[0], decimal_check.bits[0]);
+    ck_assert_uint_eq(decimal_res.bits[1], decimal_check.bits[1]);
+    ck_assert_uint_eq(decimal_res.bits[2], decimal_check.bits[2]);
+}
+END_TEST
+
+START_TEST(test_floor_10) {
+    //Decimal value:   -18446744073709551615.1
+    s21_decimal decimal = {{0xFFFFFFF7, 0xFFFFFFFF, 0x00000009, 0x80010000}};
+    s21_decimal decimal_res = {0};
+    //Decimal value:   -18446744073709551616
+    s21_decimal decimal_check = {{0, 0, 1, 0x80000000}};
+   
+    int res = s21_floor(decimal, &decimal_res);
+    ck_assert_int_eq(0, res);
+    
+    ck_assert_uint_eq(decimal_res.bits[3]>>31 & 1u, decimal_check.bits[3]>>31 & 1u);
+    ck_assert_uint_eq(decimal_res.bits[3]>>16 & 0xFF, decimal_check.bits[3]>>16 & 0xFF);
+    ck_assert_uint_eq(decimal_res.bits[0], decimal_check.bits[0]);
+    ck_assert_uint_eq(decimal_res.bits[1], decimal_check.bits[1]);
+    ck_assert_uint_eq(decimal_res.bits[2], decimal_check.bits[2]);
+}
+END_TEST
+
 START_TEST(test_floor_null) {
     s21_decimal decimal = {{0, 0, 0, 0}};
     s21_decimal * decimal_res = NULL;
@@ -182,6 +236,9 @@ Suite *floor_suite(void) {
     tcase_add_test(tc, test_floor_5);
     tcase_add_test(tc, test_floor_6);
     tcase_add_test(tc, test_floor_7);
+    tcase_add_test(tc, test_floor_8);
+    tcase_add_test(tc, test_floor_9);
+    tcase_add_test(tc, test_floor_10);
     tcase_add_test(tc, test_floor_null);
     tcase_add_test(tc, test_floor_uncorrect_free_bits1);
     tcase_add_test(tc, test_floor_uncorrect_free_bits2);
