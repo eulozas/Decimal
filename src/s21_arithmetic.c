@@ -5,34 +5,38 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     int res_add = 0;
     int sign1 = get_sign(&value_1);
     int sign2 = get_sign(&value_2);
-    s21_big_decimal big_value_1 = {0}, big_value_2 = {0}, big_result = {0};
-    to_big_decimal(&value_1, &big_value_1);
-    to_big_decimal(&value_2, &big_value_2);
-    s21_normalization_big_scale(&big_value_1, &big_value_2); //может подаваться на вход больше 28??
-    if (sign1 == sign2) {
-        set_bit(result, 127, sign1);
-        base_add(&big_value_1, &big_value_2, &big_result);
-        res_add = big_to_decimal(&big_result, result);
-    } else {
-        if (s21_is_greater(value_1, value_2)) {
-            set_bit(result, 127, get_sign(&value_1));
-            base_sub(&big_value_1, &big_value_2, &big_result);
+    if (is_zero(&value_1) && is_zero(&value_2)) to_zero(result);
+    else {
+        s21_big_decimal big_value_1 = {0}, big_value_2 = {0}, big_result = {0};
+        to_big_decimal(&value_1, &big_value_1);
+        to_big_decimal(&value_2, &big_value_2);
+        s21_normalization_big_scale(&big_value_1, &big_value_2);
+        if (sign1 == sign2) {
+            set_bit(result, 127, sign1);
+            base_add(&big_value_1, &big_value_2, &big_result);
             res_add = big_to_decimal(&big_result, result);
-        } else if (s21_is_equal(value_1, value_2)) {
-            to_zero(result);
         } else {
-            set_bit(result, 127, get_sign(&value_2));
-            base_sub(&big_value_2, &big_value_1, &big_result);
-            res_add = big_to_decimal(&big_result, result);
+            if (s21_is_greater(value_1, value_2)) {
+                set_bit(result, 127, get_sign(&value_1));
+                base_sub(&big_value_1, &big_value_2, &big_result);
+                res_add = big_to_decimal(&big_result, result);
+            } else if (s21_is_equal(value_1, value_2)) {
+                to_zero(result);
+            } else {
+                set_bit(result, 127, get_sign(&value_2));
+                base_sub(&big_value_2, &big_value_1, &big_result);
+                res_add = big_to_decimal(&big_result, result);
+            }
         }
     }
     return res_add;
 }
 
 int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
+    int res_sub = 0;
     value_2.bits[3] ^= MINUS;
-    s21_add(value_1, value_2, result);
-    return 0;
+    res_sub = s21_add(value_1, value_2, result);
+    return res_sub;
 }
 
 int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
