@@ -1,5 +1,6 @@
 #include "s21_decimal.h"
 #include "s21_helpers.h"
+#include <stdio.h>
 
 int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     int res_add = 0;
@@ -10,20 +11,23 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
         big_decimal big_value_1 = {0}, big_value_2 = {0}, big_result = {0};
         to_big_decimal(&value_1, &big_value_1);
         to_big_decimal(&value_2, &big_value_2);
+        set_bit(&value_1, 127, 0);
+        set_bit(&value_2, 127, 0);
         s21_normalization_big_scale(&big_value_1, &big_value_2);
         if (sign1 == sign2) {
             set_bit(result, 127, sign1);
             base_add(&big_value_1, &big_value_2, &big_result);
+            printf_big_decimal(&big_result);
             res_add = big_to_decimal(&big_result, result);
         } else {
             if (s21_is_greater(value_1, value_2)) {
-                set_bit(result, 127, get_sign(&value_1));
+                set_bit(result, 127, sign1);
                 base_sub(&big_value_1, &big_value_2, &big_result);
                 res_add = big_to_decimal(&big_result, result);
             } else if (s21_is_equal(value_1, value_2)) {
                 to_zero(result);
             } else {
-                set_bit(result, 127, get_sign(&value_2));
+                set_bit(result, 127, sign2);
                 base_sub(&big_value_2, &big_value_1, &big_result);
                 res_add = big_to_decimal(&big_result, result);
             }
@@ -68,6 +72,7 @@ int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 // }
 
 int base_add(const big_decimal *value_1, const big_decimal *value_2, big_decimal *result) {
+    result->scale = value_1->scale;
     int carry = 0;
     for (int i = 0; i < 224; i++) {
         int num1 = get_bit_big(value_1, i);
@@ -79,15 +84,16 @@ int base_add(const big_decimal *value_1, const big_decimal *value_2, big_decimal
 }
 
 int base_sub(const big_decimal *value_1, const big_decimal *value_2, big_decimal *result){
-  int borrow = 0;
-  for (int i = 0; i < 224; i++) {
-    int num1 = get_bit_big(value_1, i);
-    int num2 = get_bit_big(value_2, i);
-    set_bit_big(result, i, borrow ^ num1 ^ num2);
-    borrow = ((~num1 & 1u) & num2) | (borrow & (~num1 & 1u)) | (borrow & num1 & num2);
-  }
-  return 0;
-}
+    result->scale = value_1->scale;
+    int borrow = 0;
+    for (int i = 0; i < 224; i++) {
+        int num1 = get_bit_big(value_1, i);
+        int num2 = get_bit_big(value_2, i);
+        set_bit_big(result, i, borrow ^ num1 ^ num2);
+        borrow = ((~num1 & 1u) & num2) | (borrow & (~num1 & 1u)) | (borrow & num1 & num2);
+    }
+    return 0;
+    }
 
 int base_mull(big_decimal *value_1, big_decimal *value_2, big_decimal *result){
     for (int i = 0; i < 224; i++) {
@@ -148,14 +154,15 @@ void shift_right(big_decimal* decimal, int index) {
 
 void to_big_decimal(const s21_decimal* decimal, big_decimal* b_decimal) {
     for (int i = 0; i < 3; i++) {
-        b_decimal->bits[i] &= decimal->bits[i];
+        b_decimal->bits[i] = decimal->bits[i];
     }
-    b_decimal->scale &= get_scale(decimal);
+    b_decimal->scale = get_scale(decimal);
 }
 
 int big_to_decimal(big_decimal* b_decimal, s21_decimal* decimal){
     int code_error = 0;
     while (mantissa_96_bit(b_decimal) && code_error == 0) {
+        printf_big_decimal(b_decimal);
         if (b_decimal->scale > 0) {
             div_10_big_decimal(b_decimal);
         } else if (get_sign(decimal)) {
@@ -168,7 +175,7 @@ int big_to_decimal(big_decimal* b_decimal, s21_decimal* decimal){
     }
     if (code_error == 0) {
         for (int i = 0; i < 3; i++) {
-            decimal->bits[i] &= b_decimal->bits[i];
+            decimal->bits[i] = b_decimal->bits[i];
         }
         decimal->bits[3] |= b_decimal->scale << 16;
     }
@@ -183,10 +190,15 @@ void init_big_decimal(big_decimal *decimal) {
 }
 
 void s21_normalization_big_scale(big_decimal* value_1, big_decimal* value_2) {
+    printf("why\n");
+    printf("sc1=%d\n", value_1->scale);
+    printf("sc2=%d\n", value_2->scale);
     while (value_1->scale > value_2->scale) {
+        printf("scale1\n");
         mull_10_big_decimal(value_2);
     }
     while (value_2->scale > value_1->scale) {
+        printf("scale2\n");
         mull_10_big_decimal(value_1);
     }
 }
@@ -204,6 +216,7 @@ int mantissa_96_bit(const big_decimal* b_decimal) {
     for (int i = 3; i < 7 && ret == 0; i++) {
         if (b_decimal->bits[i] != 0u) ret = 1;
     }
+    printf("mantisa = %d\n", ret);
     return ret;
 }
 
@@ -229,4 +242,11 @@ int is_zero_big_decimal(big_decimal* b_decimal) {
         if (b_decimal->bits[i] != 0u) ret = 0;
     }
     return ret;
+}
+
+void printf_big_decimal(big_decimal *b_decimal) {
+    printf("mantissa\n");
+    for (int i = 0; i < 7; i++){
+        printf("%d=%u\n", i, b_decimal->bits[i]);
+    }
 }
