@@ -119,8 +119,8 @@ void to_zero(s21_decimal* decimal) {
 
 
 void set_scale(s21_decimal *decimal, int scale) {
-    if (!decimal) return;//?????
-    decimal->bits[3] &= ~(0xFF << 16);
+    // if (!decimal) return;//?????
+    // decimal->bits[3] &= ~(0xFF << 16);
     decimal->bits[3] |= (scale << 16);
 }
 
