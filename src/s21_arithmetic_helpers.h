@@ -3,6 +3,7 @@
 
 #include "s21_decimal.h"
 #include "s21_helpers.h"
+#include <stdint.h>
 
 #include <stdio.h>
 
@@ -19,9 +20,9 @@ int big_to_decimal(big_decimal* b_decimal, s21_decimal* decimal);
 
 void s21_normalization_big_scale(big_decimal* value_1, big_decimal* value_2);
 int mantissa_96_bit(const big_decimal* b_decimal);
-
+void mull_10_value(big_decimal* value_1);
 int is_zero_big_decimal(big_decimal* b_decimal);
 void div_10_big_decimal(big_decimal* b_decimal);
 void printf_big_decimal(big_decimal *b_decimal);
-
+void printf_decimal(s21_decimal *b_decimal);
 #endif

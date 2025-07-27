@@ -91,7 +91,6 @@ void to_big_decimal(const s21_decimal* decimal, big_decimal* b_decimal) {
 int big_to_decimal(big_decimal* b_decimal, s21_decimal* decimal){
     int code_error = 0;
     while (mantissa_96_bit(b_decimal) && code_error == 0) {
-        printf_big_decimal(b_decimal);
         if (b_decimal->scale > 0) {
             div_10_big_decimal(b_decimal);
         } else if (get_sign(decimal)) {
@@ -119,24 +118,32 @@ void init_big_decimal(big_decimal *decimal) {
 }
 
 void s21_normalization_big_scale(big_decimal* value_1, big_decimal* value_2) {
-    printf("why\n");
-    printf("sc1=%d\n", value_1->scale);
-    printf("sc2=%d\n", value_2->scale);
     while (value_1->scale > value_2->scale) {
-        printf("scale1\n");
         mull_10_big_decimal(value_2);
     }
     while (value_2->scale > value_1->scale) {
-        printf("scale2\n");
         mull_10_big_decimal(value_1);
     }
 }
 
+void mull_10_value(big_decimal* value_1){
+    int overflow = 0;
+
+    for(int i = 0; i < 7; i++){
+        uint64_t buffer = (uint64_t)value_1->bits[i] * 10 + overflow;
+        value_1->bits[i] = (uint32_t)buffer & 0xFFFFFFFF;
+        overflow = buffer >> 32;
+    }
+    value_1->scale++;
+}
+
+
 void mull_10_big_decimal(big_decimal* b_decimal) {
-    big_decimal tmp = *b_decimal;
-    shift_left(&tmp, 3);
-    shift_left(b_decimal, 1);
-    base_add(b_decimal, &tmp, b_decimal);
+    big_decimal tmp1 = *b_decimal;
+    big_decimal tmp2 = *b_decimal;
+    shift_left(&tmp1, 3);
+    shift_left(&tmp2, 1);
+    base_add(&tmp1, &tmp2, b_decimal);
     b_decimal->scale++;
 }
 
@@ -145,14 +152,13 @@ int mantissa_96_bit(const big_decimal* b_decimal) {
     for (int i = 3; i < 7 && ret == 0; i++) {
         if (b_decimal->bits[i] != 0u) ret = 1;
     }
-    printf("mantisa = %d\n", ret);
     return ret;
 }
 
 void div_10_big_decimal(big_decimal* b_decimal) {
     unsigned long long remainder = 0;
     for (int i = 6; i >= 0; i--) {
-        unsigned long long current = (unsigned)(b_decimal->bits[i] | (remainder << 32));
+        unsigned long long current = (unsigned long long)b_decimal->bits[i] + (remainder << 32);
         b_decimal->bits[i] = (unsigned)(current / 10);
         remainder = current % 10;
     }
@@ -177,5 +183,13 @@ void printf_big_decimal(big_decimal *b_decimal) {
     printf("mantissa\n");
     for (int i = 0; i < 7; i++){
         printf("%d=%u\n", i, b_decimal->bits[i]);
+    }
+    printf("scale=%u\n", b_decimal->scale);
+}
+
+void printf_decimal(s21_decimal *b_decimal) {
+    printf("mantissa\n");
+    for (int i = 0; i < 4; i++){
+        printf("%d=%x\n", i, b_decimal->bits[i]);
     }
 }
