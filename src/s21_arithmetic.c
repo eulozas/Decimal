@@ -13,24 +13,17 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
         set_bit(&value_2, 127, 0);
         s21_normalization_big_scale(&big_value_1, &big_value_2);
         if (sign1 == sign2) {
-            printf("sign1==sign2");
             set_bit(result, 127, sign1);
             base_add(&big_value_1, &big_value_2, &big_result);
             res_add = big_to_decimal(&big_result, result);
         } else {
             if (s21_is_greater(value_1, value_2)) {
-                printf("val_1\n");
-                printf_big_decimal(&big_value_1);
-                printf("val_2\n");
-                printf_big_decimal(&big_value_2);
                 set_bit(result, 127, sign1);
                 base_sub(&big_value_1, &big_value_2, &big_result);
                 res_add = big_to_decimal(&big_result, result);
             } else if (s21_is_equal(value_1, value_2)) {
-                printf("yes");
                 to_zero(result);
             } else {
-                printf("no");
                 set_bit(result, 127, sign2);
                 base_sub(&big_value_2, &big_value_1, &big_result);
                 res_add = big_to_decimal(&big_result, result);

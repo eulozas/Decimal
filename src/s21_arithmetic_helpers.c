@@ -90,17 +90,24 @@ void to_big_decimal(const s21_decimal* decimal, big_decimal* b_decimal) {
 
 int big_to_decimal(big_decimal* b_decimal, s21_decimal* decimal){
     int code_error = 0;
+    unsigned long long remainder = 0;
+    int tail = 0;
     while (mantissa_96_bit(b_decimal) && code_error == 0) {
         if (b_decimal->scale > 0) {
-            div_10_big_decimal(b_decimal);
+            if (remainder) tail = 1;
+            remainder = div_10_big_decimal(b_decimal);
+            if (b_decimal->scale == 0) bankers_round_big_decimal(b_decimal, remainder, tail);
         } else if (get_sign(decimal)) {
             code_error = 2;
         } else code_error = 1;
     }
     while (b_decimal->scale > 28 && code_error == 0) {
-        div_10_big_decimal(b_decimal);
-        if (is_zero_big_decimal(b_decimal)) code_error = 2;
+        if (remainder) tail = 1;
+        remainder = div_10_big_decimal(b_decimal);
+        if (is_zero_big_decimal(b_decimal) && is_bankers_round_big_decimal_up(b_decimal, remainder, tail) == 0) code_error = 2;
+        if (b_decimal->scale == 28) bankers_round_big_decimal(b_decimal, remainder, tail);
     }
+    if (code_error == 0 && b_decimal->scale >0 && b_decimal->scale < 28) bankers_round_big_decimal(b_decimal, remainder, tail);
     if (code_error == 0) {
         for (int i = 0; i < 3; i++) {
             decimal->bits[i] = b_decimal->bits[i];
@@ -155,20 +162,15 @@ int mantissa_96_bit(const big_decimal* b_decimal) {
     return ret;
 }
 
-void div_10_big_decimal(big_decimal* b_decimal) {
+unsigned long long div_10_big_decimal(big_decimal* b_decimal) {
     unsigned long long remainder = 0;
     for (int i = 6; i >= 0; i--) {
         unsigned long long current = (unsigned long long)b_decimal->bits[i] + (remainder << 32);
         b_decimal->bits[i] = (unsigned)(current / 10);
         remainder = current % 10;
     }
-    if (remainder > 5 || (remainder == 5 && (b_decimal->bits[0] & 1u))) {
-        big_decimal tmp;
-        init_big_decimal(&tmp);
-        tmp.bits[0] |= 1u;
-        base_add(b_decimal, &tmp, b_decimal);
-    }
     b_decimal->scale--;
+    return remainder;
 }
 
 int is_zero_big_decimal(big_decimal* b_decimal) {
@@ -191,5 +193,18 @@ void printf_decimal(s21_decimal *b_decimal) {
     printf("mantissa\n");
     for (int i = 0; i < 4; i++){
         printf("%d=%x\n", i, b_decimal->bits[i]);
+    }
+}
+
+int is_bankers_round_big_decimal_up(big_decimal* b_decimal, unsigned long long remainder, int tail) {
+    return (remainder > 5 || (remainder == 5 && ((b_decimal->bits[0] & 1u) || tail)));
+}
+
+void bankers_round_big_decimal(big_decimal* b_decimal, unsigned long long remainder, int tail) {
+    if (is_bankers_round_big_decimal_up(b_decimal, remainder, tail)) {
+        big_decimal tmp;
+        init_big_decimal(&tmp);
+        tmp.bits[0] |= 1u;
+        base_add(b_decimal, &tmp, b_decimal);
     }
 }
