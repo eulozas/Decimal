@@ -17,6 +17,14 @@ int get_bit(const s21_decimal *decimal, int index){
     return (decimal->bits[bit_number] >> bit_index) & 1u;
 }
 
+int get_bit_big(const big_decimal *decimal, int index){
+    if (!decimal || index < 0 || index > 224) return 0;//?????
+    int bit_index = index % 32;
+    int bit_number = index / 32;
+
+    return (decimal->bits[bit_number] >> bit_index) & 1u;
+}
+
 void set_bit(s21_decimal *decimal, int index, int val){
     if (!decimal || index < 0 || index > 127) return;//см по покрытию и логике далее нужно ли это? и ретерн надо изменить на другое значение
 
@@ -77,12 +85,12 @@ void mul_10_value(big_decimal* value_1){
     }
 }
 
-void to_big_decimal(const s21_decimal* decimal, big_decimal* big_decimal) {
-    for (int i = 0; i < 3; i++) {
-        big_decimal->bits[i] = decimal->bits[i];
-    }
-    big_decimal->scale = get_scale(decimal);
-}
+// void to_big_decimal(const s21_decimal* decimal, big_decimal* big_decimal) {
+//     for (int i = 0; i < 3; i++) {
+//         big_decimal->bits[i] = decimal->bits[i];
+//     }
+//     big_decimal->scale = get_scale(decimal);
+// }
 
 void make_same_scales(big_decimal* value_1, int* scale_value_1, int* scale_value_2){
     while(*scale_value_1 < *scale_value_2){
@@ -102,8 +110,8 @@ void to_zero(s21_decimal* decimal) {
 }
 
 void set_scale(s21_decimal *decimal, int scale) {
-    if (!decimal) return;//?????
-    decimal->bits[3] &= ~(0xFF << 16);
+    // if (!decimal) return;//?????
+    // decimal->bits[3] &= ~(0xFF << 16);
     decimal->bits[3] |= (scale << 16);
 }
 
