@@ -1,6 +1,5 @@
 #include "s21_decimal.h"
 #include "s21_helpers.h"
-#include <stdio.h>
 
 int s21_from_float_to_decimal(float src, s21_decimal *dst){
     if(!dst) return 1;
@@ -15,7 +14,7 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst){
     if(!exit_code){
         double value = fabs((double)src);
         int scale = 0;
-        unsigned long long mantissa = 0;
+        unsigned long long mantissa;
         int digits = 0;
         if (src == 0.0f) {
             exit_code = 0;

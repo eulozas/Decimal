@@ -24,7 +24,7 @@ int find_point_index(double x);
 void normalize_mantissa(unsigned long long *mantissa, int *scale);
 void mul_decimal_by_10_and_carry_bits(s21_decimal *decimal);
 void write_mantissa_to_decimal(unsigned long long mantissa, s21_decimal *decimal);
-void divide_by_10(unsigned int *high, unsigned int *mid, unsigned int *low);
+int divide_by_10(unsigned int *high, unsigned int *mid, unsigned int *low);
 int base_add(const s21_decimal *value_1, const s21_decimal *value_2, s21_decimal *result);
 int base_sub(const s21_decimal *value_1, const s21_decimal *value_2, s21_decimal *result);
 void mul_10_value(big_decimal* value_1);
@@ -37,5 +37,7 @@ void init_big_decimal(big_decimal *decimal);
 void shift_right(big_decimal* decimal, const int* index);
 void shift_left(big_decimal* decimal, const int* index);
 int check_free_decimal_bit(s21_decimal decimal);
+void increment_decimal_bits(unsigned int *low, unsigned int *mid, unsigned int *high);
+int is_even(s21_decimal value);
 
 #endif

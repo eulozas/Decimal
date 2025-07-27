@@ -172,7 +172,8 @@ void write_mantissa_to_decimal(unsigned long long mantissa, s21_decimal *decimal
     decimal->bits[2] = 0;
 }
 
-void divide_by_10(unsigned int *high, unsigned int *mid, unsigned int *low) {
+int divide_by_10(unsigned int *high, unsigned int *mid, unsigned int *low) {
+    int has_fraction = 0;
     unsigned long long rest = 0;
 
     unsigned long long value = ((unsigned long long)(*high));
@@ -185,6 +186,9 @@ void divide_by_10(unsigned int *high, unsigned int *mid, unsigned int *low) {
 
     value = ((unsigned long long)(*low)) + (rest << 32);
     *low = (unsigned int)(value / 10);
+    if (value % 10 != 0) has_fraction = 1; // дробное, остаток был 
+
+    return has_fraction;
 }
 
 int check_free_decimal_bit(s21_decimal decimal){
@@ -203,6 +207,19 @@ int check_free_decimal_bit(s21_decimal decimal){
     return res;
 }
 
+void increment_decimal_bits(unsigned int *low, unsigned int *mid, unsigned int *high) {
+    if (++(*low) == 0) { // произошло переполнение low
+        if (++(*mid) == 0) { // переполнение mid
+            ++(*high); // прибавляем к high
+        }
+    }
+}
+
+int is_even(s21_decimal value) {
+    return (value.bits[0] & 1) != 1;
+}
+
+
 // int main() {
 
 //     // s21_decimal decimal1 = {{0xAAAAAAAA, 0xAAAAAAAA, 0xAAAAAAAA, 0x10000}};
@@ -210,11 +227,33 @@ int check_free_decimal_bit(s21_decimal decimal){
 //     // s21_decimal decimal2 = {{0x11111111, 0x11111111, 0x11111111, 0x0}};
 
 //     // printf("%d\n", s21_is_less(decimal1, decimal2));
+//      // -5281877500950955839569596689.0
+//     s21_decimal decimal = {{0xAAAAAAAA, 0xAAAAAAAA, 0xAAAAAAAA, 0x80010000}};
 
+//     printf("decimal scale %d\n", decimal.bits[3]>>16 & 0xFF);
+//     printf("decimal low %u\n", decimal.bits[0]);
+//     printf("decimal mid %u\n", decimal.bits[1]);
+//     printf("decimal high %u\n", decimal.bits[2]);
+
+//     s21_decimal decimal_res = {{0x11111111, 0x11111111, 0x11111111, 0x80000000}};
+
+//     // printf("decimal scale %d\n", decimal_res.bits[3]>>16 & 0xFF);
+//     // printf("decimal low %u\n", decimal_res.bits[0]);
+//     // printf("decimal mid %u\n", decimal_res.bits[1]);
+//     // printf("decimal high %u\n", decimal_res.bits[2]);
 
 //     s21_decimal a = {{1000, 0, 0, 1 << 16}};  // 100.0
 //     s21_decimal b = {{10000, 0, 0, 2 << 16}}; // 100.00
 //     printf("%d\n", s21_is_equal(a, b));
 
 //     return 0;
+//     s21_floor(decimal, &decimal_res);
+
+//     printf("decimal scale %d\n", decimal_res.bits[3]>>16 & 0xFF);
+//     printf("decimal low %u\n", decimal_res.bits[0]);
+//     printf("decimal mid %u\n", decimal_res.bits[1]);
+//     printf("decimal high %u\n", decimal_res.bits[2]);
+
+
+// return 0;
 // }

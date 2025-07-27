@@ -56,7 +56,7 @@ static const float fails_small[] = {
 };
 
 
-int s21_is_equal(s21_decimal d1, s21_decimal d2) {
+int test1_is_equal(s21_decimal d1, s21_decimal d2) {
     for (int i = 0; i < 4; i++) {
         if (d1.bits[i] != d2.bits[i]) return 0;
     }
@@ -71,7 +71,7 @@ void test_from_float_to_decimal(int f, s21_decimal decimal_check) {
 
     int code = s21_from_float_to_decimal(cast_float.f, &result);
     ck_assert_int_eq(code, 0);
-    ck_assert_int_eq(s21_is_equal(result, decimal_check), 1);
+    ck_assert_int_eq(test1_is_equal(result, decimal_check), 1);
 }
 
 void test_from_int_to_decimal(int number, s21_decimal decimal_check) {
@@ -80,7 +80,7 @@ void test_from_int_to_decimal(int number, s21_decimal decimal_check) {
     int sign_check = decimal_check.bits[3]>>31 & 1u;
     int sign_result = result.bits[3]>>31 & 1u;
     ck_assert_int_eq(code, 0);
-    ck_assert_int_eq(s21_is_equal(result, decimal_check), 1);
+    ck_assert_int_eq(test1_is_equal(result, decimal_check), 1);
     ck_assert_int_eq(sign_check, sign_result);
 }
 

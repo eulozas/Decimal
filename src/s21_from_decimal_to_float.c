@@ -6,11 +6,11 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst){
     if(!dst)return 1;
     int exit_code = 0;
     int sign = get_sign(&src);
-     int scale = get_scale(&src);
+    int scale = get_scale(&src);
 
-     int check_bit = check_free_decimal_bit(src);
+    int check_bit = check_free_decimal_bit(src);
 
-     if(scale < 0 || scale > MAX_SCALE || check_bit){
+    if(scale < 0 || scale > MAX_SCALE || check_bit){
         exit_code = 1;
     }
 
