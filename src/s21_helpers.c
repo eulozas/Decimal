@@ -2,7 +2,6 @@
 #include <stdint.h>
 #include "s21_helpers.h"
 
-
 void clear_decimal(s21_decimal *decimal) {
     if (!decimal) return;
     for (int i = 0; i < 4; ++i) {
@@ -76,21 +75,24 @@ int get_scale(const s21_decimal *decimal){
     return (decimal->bits[3] >> 16) & 0xFF;
 }
 
-void mul_10_value(s21_decimal* value_1){
+void mul_10_value(big_decimal* value_1){
     int overflow = 0;
 
-    for(int i = 0; i < 3; i++){
+    for(int i = 0; i < 7; i++){
         uint64_t buffer = (uint64_t)value_1->bits[i] * 10 + overflow;
         value_1->bits[i] = (uint32_t)buffer & 0xFFFFFFFF;
         overflow = buffer >> 32;
     }
-
-    if(overflow != 0){//
-        //переполнение
-    }
 }
 
-void make_same_scales(s21_decimal* value_1, int* scale_value_1, int* scale_value_2){
+// void to_big_decimal(const s21_decimal* decimal, big_decimal* big_decimal) {
+//     for (int i = 0; i < 3; i++) {
+//         big_decimal->bits[i] = decimal->bits[i];
+//     }
+//     big_decimal->scale = get_scale(decimal);
+// }
+
+void make_same_scales(big_decimal* value_1, int* scale_value_1, int* scale_value_2){
     while(*scale_value_1 < *scale_value_2){
         mul_10_value(value_1);
         (*scale_value_1)++;
@@ -106,17 +108,6 @@ void to_zero(s21_decimal* decimal) {
         decimal->bits[i] = 0;
     }
 }
-
-// int main() {
-//     s21_decimal a = {{1000, 0, 0, 1 << 16}};  // 100.0
-//     s21_decimal b = {{10000, 0, 0, 2 << 16}}; // 100.00
-
-
-//     printf("%d\n", s21_is_equal(a, b));
-
-//     return 0;
-// }
-
 
 void set_scale(s21_decimal *decimal, int scale) {
     // if (!decimal) return;//?????
@@ -156,7 +147,6 @@ double bank_round(double x) {
 }
 
 int find_point_index(double x) {
-    if (x == 0.0) return 0;
     x = fabs(x);
     int index = 0;
 
@@ -164,23 +154,8 @@ int find_point_index(double x) {
         x /= 10.0;
         index++;
     }
-    // while (x < 1.0) {
-    //     x *= 10.0;
-    //     index--;
-    // }
-
     return index;
 }
-
-// void round_to_significant_digits(double *x, int n) {
-//     if (*x == 0.0) return;
-//     double abs_x = fabs(*x);
-//     int order = decimal_order(abs_x);
-//     double scale = pow(10.0, n - 1 - order);
-//     double scaled = *x * scale;
-//     double rounded = bank_round(scaled);
-//     *x = rounded / scale;
-// }
 
 void normalize_mantissa(unsigned long long *mantissa, int *scale) {
     while (*scale > 0 && (*mantissa % 10 == 0)) {
@@ -205,7 +180,8 @@ void write_mantissa_to_decimal(unsigned long long mantissa, s21_decimal *decimal
     decimal->bits[2] = 0;
 }
 
-void divide_by_10(unsigned int *high, unsigned int *mid, unsigned int *low) {
+int divide_by_10(unsigned int *high, unsigned int *mid, unsigned int *low) {
+    int has_fraction = 0;
     unsigned long long rest = 0;
 
     unsigned long long value = ((unsigned long long)(*high));
@@ -218,26 +194,74 @@ void divide_by_10(unsigned int *high, unsigned int *mid, unsigned int *low) {
 
     value = ((unsigned long long)(*low)) + (rest << 32);
     *low = (unsigned int)(value / 10);
+    if (value % 10 != 0) has_fraction = 1; // дробное, остаток был 
+
+    return has_fraction;
 }
+
+int check_free_decimal_bit(s21_decimal decimal){
+    int res = 0;
+    for(int i = 96; i < 112 && !res; i++){
+        if(get_bit(&decimal, i)){
+            res = 1;
+        }
+    }
+    for(int i = 120; i < 127 && !res; i++){
+        if(get_bit(&decimal, i)){
+            res = 1;
+        }
+    }
+
+    return res;
+}
+
+void increment_decimal_bits(unsigned int *low, unsigned int *mid, unsigned int *high) {
+    if (++(*low) == 0) { // произошло переполнение low
+        if (++(*mid) == 0) { // переполнение mid
+            ++(*high); // прибавляем к high
+        }
+    }
+}
+
+int is_even(s21_decimal value) {
+    return (value.bits[0] & 1) != 1;
+}
+
 
 // int main() {
 
-//  // 0.0000003280549
-// //s21_decimal decimal = {{0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0x001C0000}};
-// // int x;
-// // s21_from_decimal_to_int(decimal, &x);
-// s21_decimal decimal;
-// float a = 5.1;
-// s21_from_float_to_decimal(a, &decimal);
+//     // s21_decimal decimal1 = {{0xAAAAAAAA, 0xAAAAAAAA, 0xAAAAAAAA, 0x10000}};
+//     // // 5281877500950955839569596689
+//     // s21_decimal decimal2 = {{0x11111111, 0x11111111, 0x11111111, 0x0}};
 
-// printf("%.20f\n", a);
+//     // printf("%d\n", s21_is_less(decimal1, decimal2));
+//      // -5281877500950955839569596689.0
+//     s21_decimal decimal = {{0xAAAAAAAA, 0xAAAAAAAA, 0xAAAAAAAA, 0x80010000}};
 
-// printf("decimal scale %d\n", decimal.bits[3]>>16 & 0xFF);
-// printf("decimal low %u\n", decimal.bits[0]);
-// printf("decimal mid %u\n", decimal.bits[1]);
-// printf("decimal high %u\n", decimal.bits[2]);
+//     printf("decimal scale %d\n", decimal.bits[3]>>16 & 0xFF);
+//     printf("decimal low %u\n", decimal.bits[0]);
+//     printf("decimal mid %u\n", decimal.bits[1]);
+//     printf("decimal high %u\n", decimal.bits[2]);
 
-// //printf("int %d\n", x);
+//     s21_decimal decimal_res = {{0x11111111, 0x11111111, 0x11111111, 0x80000000}};
+
+//     // printf("decimal scale %d\n", decimal_res.bits[3]>>16 & 0xFF);
+//     // printf("decimal low %u\n", decimal_res.bits[0]);
+//     // printf("decimal mid %u\n", decimal_res.bits[1]);
+//     // printf("decimal high %u\n", decimal_res.bits[2]);
+
+//     s21_decimal a = {{1000, 0, 0, 1 << 16}};  // 100.0
+//     s21_decimal b = {{10000, 0, 0, 2 << 16}}; // 100.00
+//     printf("%d\n", s21_is_equal(a, b));
+
+//     return 0;
+//     s21_floor(decimal, &decimal_res);
+
+//     printf("decimal scale %d\n", decimal_res.bits[3]>>16 & 0xFF);
+//     printf("decimal low %u\n", decimal_res.bits[0]);
+//     printf("decimal mid %u\n", decimal_res.bits[1]);
+//     printf("decimal high %u\n", decimal_res.bits[2]);
+
 
 // return 0;
 // }
