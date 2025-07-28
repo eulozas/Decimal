@@ -92,13 +92,15 @@ int big_to_decimal(big_decimal* b_decimal, s21_decimal* decimal){
     unsigned long long remainder = 0;
     int tail = 0;
     int round_done = 0;
-    while (mantissa_96_bit(b_decimal) && code_error == 0) {
+    while (mantissa_96_bit(b_decimal, remainder, tail) && code_error == 0) {
         if (b_decimal->scale > 0) {
             if (remainder) tail = 1;
             remainder = div_10_big_decimal(b_decimal);
             if (b_decimal->scale == 0) {
                 round_done = 1;
                 bankers_round_big_decimal(b_decimal, remainder, tail);
+                remainder = 0;
+                tail = 0;
             }
         } else if (get_sign(decimal)) {
             code_error = 2;
@@ -162,10 +164,12 @@ void mull_10_big_decimal(big_decimal* b_decimal) {
     b_decimal->scale++;
 }
 
-int mantissa_96_bit(const big_decimal* b_decimal) {
+int mantissa_96_bit(const big_decimal* b_decimal, unsigned long long remainder, int tail) {
+    big_decimal tmp = *b_decimal;
+    bankers_round_big_decimal(&tmp, remainder, tail);
     int ret = 0;
     for (int i = 3; i < 7 && ret == 0; i++) {
-        if (b_decimal->bits[i] != 0u) ret = 1;
+        if (tmp.bits[i] != 0u) ret = 1;
     }
     return ret;
 }
@@ -200,7 +204,7 @@ void printf_big_decimal(big_decimal *b_decimal) {
 void printf_decimal(s21_decimal *b_decimal) {
     printf("mantissa\n");
     for (int i = 0; i < 4; i++){
-        printf("%d=%u\n", i, b_decimal->bits[i]);
+        printf("%d=%x\n", i, b_decimal->bits[i]);
     }
 }
 

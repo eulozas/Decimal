@@ -19,7 +19,7 @@ void to_big_decimal(const s21_decimal* decimal, big_decimal* b_decimal);
 int big_to_decimal(big_decimal* b_decimal, s21_decimal* decimal);
 
 void s21_normalization_big_scale(big_decimal* value_1, big_decimal* value_2);
-int mantissa_96_bit(const big_decimal* b_decimal);
+int mantissa_96_bit(const big_decimal* b_decimal, unsigned long long remainder, int tail);
 void mull_10_value(big_decimal* value_1);
 int is_zero_big_decimal(big_decimal* b_decimal);
 unsigned long long div_10_big_decimal(big_decimal* b_decimal);
