@@ -51,4 +51,4 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-src/tests/test_add.c
+src/tests/
