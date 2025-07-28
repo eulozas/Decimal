@@ -2,7 +2,7 @@
 #include "s21_helpers.h"
 
 int s21_is_greater(s21_decimal value_1, s21_decimal value_2){
-    int sign_value_1 = get_sign(&value_1);//0 = +, 1 = -
+    int sign_value_1 = get_sign(&value_1);
     int sign_value_2 = get_sign(&value_2);
     int scale_value_1 = get_scale(&value_1);
     int scale_value_2 = get_scale(&value_2);
