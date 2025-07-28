@@ -41,16 +41,17 @@ int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 }
 
 int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
+    int res_mull = 0;
     int sign1 = get_sign(&value_1);
     int sign2 = get_sign(&value_2);
     set_bit(result, 127, sign1 ^ sign2);
-    big_decimal temp_value_1 = {0}, temp_value_2 = {0}, temp_result = {0};
+    big_decimal temp_value_1 = {{0}, 0}, temp_value_2 = {{0}, 0}, temp_result = {{0}, 0};
     to_big_decimal(&value_1, &temp_value_1);
     to_big_decimal(&value_2, &temp_value_2);
     to_big_decimal(result, &temp_result);
     base_mull(&temp_value_1, &temp_value_2, &temp_result);
-    big_to_decimal(&temp_result, result);
-    return 0;
+    res_mull = big_to_decimal(&temp_result, result);
+    return res_mull;
 }
 
 // int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {

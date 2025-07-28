@@ -25,14 +25,15 @@ int base_sub(const big_decimal *value_1, const big_decimal *value_2, big_decimal
     }
 
 int base_mull(big_decimal *value_1, big_decimal *value_2, big_decimal *result){
-    for (int i = 0; i < 224; i++) {
+    for (int i = 0; i < 96; i++) {
         int num = get_bit_big(value_1, i);
-        if (num) {
+        if (num == 1) {
             big_decimal tmp = *value_2;
             shift_left(&tmp, i);
-            base_add(result, value_2, result); //??????? все норм если изменить в самой base_add работать над конвертируемыми числами и уже в конце записывать результат
+            base_add(result, &tmp, result);
         }
     }
+    result->scale = value_1->scale + value_2->scale;
     return 0;
 }
 
@@ -41,7 +42,6 @@ int shift_left(big_decimal* decimal, int index) {
 
     int word_shift = index / 32;
     int index_shift = index % 32;
-
     for (int i = 6; i >= 0 && !overflow && word_shift; i--) {
         if (i - word_shift >= 0){
             if (decimal->bits[i]) overflow = 1;
@@ -54,8 +54,7 @@ int shift_left(big_decimal* decimal, int index) {
     for (int i = 0; i < index_shift && !overflow; i++) {
         if (get_bit_big(decimal, 223 - i)) overflow = 1;
     }
-
-    for (int i = 6; i >=0 && !overflow; i--){
+    for (int i = 6; i >=0 && !overflow && index_shift != 0; i--){
         decimal->bits[i] <<= index_shift;
         if (i - 1 >= 0) {
             decimal->bits[i] |= (decimal->bits[i - 1] >> (32 - index_shift));
@@ -107,7 +106,9 @@ int big_to_decimal(big_decimal* b_decimal, s21_decimal* decimal){
         if (is_zero_big_decimal(b_decimal) && is_bankers_round_big_decimal_up(b_decimal, remainder, tail) == 0) code_error = 2;
         if (b_decimal->scale == 28) bankers_round_big_decimal(b_decimal, remainder, tail);
     }
-    if (code_error == 0 && b_decimal->scale >0 && b_decimal->scale < 28) bankers_round_big_decimal(b_decimal, remainder, tail);
+    if (code_error == 0 && b_decimal->scale >0 && b_decimal->scale < 28) {
+        bankers_round_big_decimal(b_decimal, remainder, tail);
+    }
     if (code_error == 0) {
         for (int i = 0; i < 3; i++) {
             decimal->bits[i] = b_decimal->bits[i];
