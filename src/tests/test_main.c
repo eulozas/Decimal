@@ -7,18 +7,10 @@ Suite *from_decimal_to_int(void);
 Suite *from_decimal_to_float(void);
 Suite *comparison_suite(void);
 Suite *floor_suite(void);
-Suite *truncate_suite0(void);
-Suite *truncate_suite1(void);
-Suite *truncate_suite2(void);
-Suite *truncate_suite3(void);
-Suite *negate_suite0(void);
-Suite *negate_suite1(void);
-Suite *negate_suite2(void);
-Suite *negate_suite3(void);
-Suite *round_suite0(void);
-Suite *round_suite1(void);
-Suite *round_suite2(void);
-Suite *round_suite3(void);
+Suite *round_suite(void);
+Suite *truncate_suite(void);
+Suite *negate_suite(void);
+
 
 // Потом убрать этот блок
 // Suite *from_decimal_to_int_suite1(void);
@@ -61,18 +53,10 @@ int main(void) {
   srunner_add_suite(sr, from_decimal_to_float());
   srunner_add_suite(sr, comparison_suite());
   srunner_add_suite(sr, floor_suite());
-  srunner_add_suite(sr, truncate_suite0());
-  srunner_add_suite(sr, truncate_suite1());
-  srunner_add_suite(sr, truncate_suite2());
-  srunner_add_suite(sr, truncate_suite3());
-  srunner_add_suite(sr, negate_suite0());
-  srunner_add_suite(sr, negate_suite1());
-  srunner_add_suite(sr, negate_suite2());
-  srunner_add_suite(sr, negate_suite3());
-  srunner_add_suite(sr, round_suite0());
-  srunner_add_suite(sr, round_suite1());
-  srunner_add_suite(sr, round_suite2());
-  srunner_add_suite(sr, round_suite3());
+  srunner_add_suite(sr, round_suite());
+  srunner_add_suite(sr, truncate_suite());
+  srunner_add_suite(sr, negate_suite());
+
   
 
   //Потом убрать этот блок
