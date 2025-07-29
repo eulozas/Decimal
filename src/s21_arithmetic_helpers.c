@@ -224,15 +224,12 @@ void bankers_round_big_decimal(big_decimal* b_decimal, unsigned long long remain
 int s21_is_greater_big_decimal(big_decimal value_1, big_decimal value_2) {
     int result = 1;
     int equal = 0;
-    big_decimal big_value_1 = {0}, big_value_2 = {0};
-    to_big_decimal(&value_1, &big_value_1);
-    to_big_decimal(&value_2, &big_value_2);
     for(int i = 6; i >= 0; i--){
-        if(big_value_1.bits[i] > big_value_2.bits[i]){
+        if(value_1.bits[i] > value_2.bits[i]){
             result = 1;
             break;
         }
-        else if(big_value_1.bits[i] < big_value_2.bits[i]){
+        else if(value_1.bits[i] < value_2.bits[i]){
             result = 0;
             break;
         }
@@ -248,11 +245,8 @@ int s21_is_greater_big_decimal(big_decimal value_1, big_decimal value_2) {
 
 int s21_is_equal_big_decimal(big_decimal value_1, big_decimal value_2){
     int result = 1;
-    big_decimal big_value_1 = {0}, big_value_2 = {0};
-    to_big_decimal(&value_1, &big_value_1);
-    to_big_decimal(&value_2, &big_value_2);
     for(int i = 6; i >= 0; i--){
-        if(big_value_1.bits[i] != big_value_2.bits[i]){
+        if(value_1.bits[i] != value_2.bits[i]){
             result = 0;
             break;
         }
