@@ -71,3 +71,13 @@ int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 //     }
 //     return 0;
 // }
+
+// int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
+//     big_decimal remainder = {{0}, 0};
+//     big_decimal quotient = {{0}, 0};
+//     for (int i = 223; i >= 0; i--) {
+//         shift_left(&remainder, 1);
+        
+//     }
+
+// }
