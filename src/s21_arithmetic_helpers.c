@@ -66,16 +66,16 @@ int shift_left(big_decimal* decimal, int index) {
 void shift_right(big_decimal* decimal, int index) {
     int word_shift = index / 32;
     int index_shift = index % 32;
-    for (int i = 0; i < 7; i++) {
-        decimal->bits[i] &= 0u;
-        decimal->bits[i] &= decimal->bits[i + word_shift];
+    for (int i = 0; i < 7 && word_shift; i++) {
+        if (word_shift + i <= 6) {
+            decimal->bits[i] &= 0u;
+            decimal->bits[i] |= decimal->bits[i + word_shift];
+        }
     }
-    if (index_shift > 0) {
-        for (int i = 0; i < 7; i++) {
-            decimal->bits[i] >>= index_shift;
-            if (i + 1 >= 0) {
-                decimal->bits[i] |= (decimal->bits[i + 1] << (32 - index_shift));
-            }
+    for (int i = 0; i < 7 && index_shift != 0; i++) {
+        decimal->bits[i] >>= index_shift;
+        if (i + 1 <= 6) {
+            decimal->bits[i] |= (decimal->bits[i + 1] << (32 - index_shift));
         }
     }
 }
