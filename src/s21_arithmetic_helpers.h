@@ -11,7 +11,6 @@ int base_add(const big_decimal *value_1, const big_decimal *value_2, big_decimal
 int base_sub(const big_decimal *value_1, const big_decimal *value_2, big_decimal *result);
 int base_mull(big_decimal *value_1, big_decimal *value_2, big_decimal *result);
 
-void shift_right(big_decimal* decimal, int index);
 int shift_left(big_decimal* decimal, int index);
 
 void init_big_decimal(big_decimal *decimal);
@@ -23,8 +22,6 @@ int mantissa_96_bit(const big_decimal* b_decimal, unsigned long long remainder, 
 void mull_10_value(big_decimal* value_1);
 int is_zero_big_decimal(big_decimal* b_decimal);
 unsigned long long div_10_big_decimal(big_decimal* b_decimal);
-void printf_big_decimal(big_decimal *b_decimal);
-void printf_decimal(s21_decimal *b_decimal);
 int is_bankers_round_big_decimal_up(big_decimal* b_decimal, unsigned long long reminder, int tail);
 void bankers_round_big_decimal(big_decimal* b_decimal, unsigned long long reminder, int tail);
 

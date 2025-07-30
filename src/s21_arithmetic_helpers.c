@@ -63,23 +63,6 @@ int shift_left(big_decimal* decimal, int index) {
     return overflow; 
 }
 
-void shift_right(big_decimal* decimal, int index) {
-    int word_shift = index / 32;
-    int index_shift = index % 32;
-    for (int i = 0; i < 7 && word_shift; i++) {
-        if (word_shift + i <= 6) {
-            decimal->bits[i] &= 0u;
-            decimal->bits[i] |= decimal->bits[i + word_shift];
-        }
-    }
-    for (int i = 0; i < 7 && index_shift != 0; i++) {
-        decimal->bits[i] >>= index_shift;
-        if (i + 1 <= 6) {
-            decimal->bits[i] |= (decimal->bits[i + 1] << (32 - index_shift));
-        }
-    }
-}
-
 void to_big_decimal(const s21_decimal* decimal, big_decimal* b_decimal) {
     for (int i = 0; i < 3; i++) {
         b_decimal->bits[i] = decimal->bits[i];
@@ -191,21 +174,6 @@ int is_zero_big_decimal(big_decimal* b_decimal) {
         if (b_decimal->bits[i] != 0u) ret = 0;
     }
     return ret;
-}
-
-void printf_big_decimal(big_decimal *b_decimal) {
-    printf("mantissa\n");
-    for (int i = 0; i < 7; i++){
-        printf("%d=%u\n", i, b_decimal->bits[i]);
-    }
-    printf("scale=%u\n", b_decimal->scale);
-}
-
-void printf_decimal(s21_decimal *b_decimal) {
-    printf("mantissa\n");
-    for (int i = 0; i < 4; i++){
-        printf("%d=%x\n", i, b_decimal->bits[i]);
-    }
 }
 
 int is_bankers_round_big_decimal_up(big_decimal* b_decimal, unsigned long long remainder, int tail) {
