@@ -84,7 +84,6 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
         }
         printf("rem=%d\n", is_zero_big_decimal(&remainder));
         while(is_zero_big_decimal(&remainder) == 0 && quotient.scale < 28 && quotient.bits[6] < 0xfffffff) {
-            printf("yes\n");
             mull_10_big_decimal(&remainder);
             big_decimal digit = {{0}, 0};
             unsigned bit = 0;
@@ -96,7 +95,6 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
             digit.bits[0] = bit;
             mull_10_big_decimal(&quotient);
             base_add(&quotient, &digit, &quotient); 
-            quotient.scale++;
         }
         res_div = big_to_decimal(&quotient, result);
     }
