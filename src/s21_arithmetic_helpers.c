@@ -204,7 +204,7 @@ void printf_big_decimal(big_decimal *b_decimal) {
 void printf_decimal(s21_decimal *b_decimal) {
     printf("mantissa\n");
     for (int i = 0; i < 4; i++){
-        printf("%d=%x\n", i, b_decimal->bits[i]);
+        printf("%d=%u\n", i, b_decimal->bits[i]);
     }
 }
 

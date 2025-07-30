@@ -57,27 +57,48 @@ int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     return res_mull;
 }
 
-// int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-//     int q = 0;
-//     int tmp_shift = 1;
-//     big_decimal digit = {0};
-//     digit.bits[0] = 1u;
-//     while (s21_is_less_or_equal(value_2, value_1)) {
-//         big_decimal temp_value_1 = {0}, temp_value_2 = {0}, temp_result = {0};
-//         to_big_decimal(&value_1, &temp_value_1);
-//         to_big_decimal(&value_2, &temp_value_2);
-//         shift_left(&digit, &tmp_shift);
-//         base_mull(&temp_value_2, &digit, &temp_result);
-//     }
-//     return 0;
-// }
+int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
+    int res_div = 0;
+    if (is_zero(&value_2)) res_div = 4;
+    else if (is_zero(&value_1)) to_zero(result);
+    else {
+        big_decimal remainder = {{0}, 0};
+        big_decimal quotient = {{0}, 0};
+        big_decimal big_value_1 = {{0}, 0}, big_value_2 = {{0}, 0};
+        to_big_decimal(&value_1, &big_value_1);
+        to_big_decimal(&value_2, &big_value_2);
+        if (big_value_1.scale < big_value_2.scale) s21_normalization_big_scale(&big_value_1, &big_value_2);
+        quotient.scale = big_value_1.scale - big_value_2.scale;
+        for (int i = 223; i >= 0; i--) {
+            shift_left(&remainder, 1);
+            int temp = get_bit_big(&big_value_1, i);
+            set_bit_big(&remainder, 0, temp);
+            if (s21_is_greater_big_decimal(remainder, big_value_2) || s21_is_equal_big_decimal(remainder, big_value_2)){
+                base_sub(&remainder, &big_value_2, &remainder);
+                shift_left(&quotient, 1);
+                set_bit_big(&quotient, 0, 1);
+            } else {
+                shift_left(&quotient, 1);
+                set_bit_big(&quotient, 0, 0);
+            }
+        }
+        printf("rem=%d\n", is_zero_big_decimal(&remainder));
+        while(is_zero_big_decimal(&remainder) == 0 && quotient.scale < 28 && quotient.bits[6] < 0xfffffff) {
+            printf("yes\n");
+            mull_10_big_decimal(&remainder);
+            big_decimal digit = {{0}, 0};
+            unsigned bit = 0;
 
-// int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-//     big_decimal remainder = {{0}, 0};
-//     big_decimal quotient = {{0}, 0};
-//     for (int i = 223; i >= 0; i--) {
-//         shift_left(&remainder, 1);
-        
-//     }
-
-// }
+            while (s21_is_greater_big_decimal(remainder, big_value_2) || s21_is_equal_big_decimal(remainder, big_value_2)) {
+                base_sub(&remainder, &big_value_2, &remainder);
+                bit++;
+            }
+            digit.bits[0] = bit;
+            mull_10_big_decimal(&quotient);
+            base_add(&quotient, &digit, &quotient); 
+            quotient.scale++;
+        }
+        res_div = big_to_decimal(&quotient, result);
+    }
+    return res_div;
+}
