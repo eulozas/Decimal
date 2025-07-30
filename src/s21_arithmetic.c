@@ -59,9 +59,12 @@ int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 
 int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     int res_div = 0;
-    if (is_zero(&value_2)) res_div = 4;
+    if (is_zero(&value_2)) res_div = 3;
     else if (is_zero(&value_1)) to_zero(result);
     else {
+        int sign1 = get_sign(&value_1);
+        int sign2 = get_sign(&value_2);
+        set_bit(result, 127, sign1 ^ sign2);
         big_decimal remainder = {{0}, 0};
         big_decimal quotient = {{0}, 0};
         big_decimal big_value_1 = {{0}, 0}, big_value_2 = {{0}, 0};
@@ -82,8 +85,7 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
                 set_bit_big(&quotient, 0, 0);
             }
         }
-        printf("rem=%d\n", is_zero_big_decimal(&remainder));
-        while(is_zero_big_decimal(&remainder) == 0 && quotient.scale < 28 && quotient.bits[6] < 0xfffffff) {
+        while(is_zero_big_decimal(&remainder) == 0 && quotient.bits[6] < 0xfffffff) {
             mull_10_big_decimal(&remainder);
             big_decimal digit = {{0}, 0};
             unsigned bit = 0;
