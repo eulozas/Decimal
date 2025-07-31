@@ -20,8 +20,8 @@ int s21_round(s21_decimal value, s21_decimal *result){
         }else{
             s21_decimal number_0_5 = {{0x5, 0x0, 0x0, 0x10000}};
             s21_decimal number_1 = {{0x1, 0x0, 0x0, 0x0}};
-            s21_decimal integer_part;
-            s21_decimal fractional_part;
+            s21_decimal integer_part  = {0};
+            s21_decimal fractional_part  = {0};
             if(sign){
                 clear_sign(&value);
             }
