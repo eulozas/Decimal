@@ -5,7 +5,16 @@
 #include "s21_helpers.h"
 #include <stdint.h>
 
-#include <stdio.h>
+#define S21_OK 0
+#define S21_OVERFLOW 1
+#define S21_UNDERFLOW 2
+#define S21_NEG_OVERFLOW 2
+#define S21_DIV_BY_ZERO 3
+
+#define MAX_IND_DECIMAL 127
+#define MAX_IND_BIG_DECIMAL 223
+#define MAX_BIG_DECIMAL_MANTISSA 224
+#define MAX_DECIMAL_MANTISSA 96
 
 int base_add(const big_decimal *value_1, const big_decimal *value_2, big_decimal *result);
 int base_sub(const big_decimal *value_1, const big_decimal *value_2, big_decimal *result);

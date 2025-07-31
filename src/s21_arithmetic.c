@@ -1,7 +1,7 @@
 #include "s21_arithmetic_helpers.h"
 
 int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-    int res_add = 0;
+    int res_add = S21_OK;
     if (is_zero(&value_1) && is_zero(&value_2)) to_zero(result);
     else {
         int sign1 = get_sign(&value_1);
@@ -34,14 +34,14 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 }
 
 int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-    int res_sub = 0;
+    int res_sub = S21_OK;
     value_2.bits[3] ^= MINUS;
     res_sub = s21_add(value_1, value_2, result);
     return res_sub;
 }
 
 int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-    int res_mull = 0;
+    int res_mull = S21_OK;
     if (is_zero(&value_1) || is_zero(&value_2)) to_zero(result);
     else {
         int sign1 = get_sign(&value_1);
@@ -58,8 +58,8 @@ int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 }
 
 int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-    int res_div = 0;
-    if (is_zero(&value_2)) res_div = 3;
+    int res_div = S21_OK;
+    if (is_zero(&value_2)) res_div = S21_DIV_BY_ZERO;
     else if (is_zero(&value_1)) to_zero(result);
     else {
         int sign1 = get_sign(&value_1);

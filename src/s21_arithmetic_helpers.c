@@ -3,7 +3,7 @@
 int base_add(const big_decimal *value_1, const big_decimal *value_2, big_decimal *result) {
     result->scale = value_1->scale;
     int carry = 0;
-    for (int i = 0; i < 224; i++) {
+    for (int i = 0; i < MAX_BIG_DECIMAL_MANTISSA; i++) {
         int num1 = get_bit_big(value_1, i);
         int num2 = get_bit_big(value_2, i);
         set_bit_big(result, i, num1 ^ num2 ^ carry);
@@ -15,7 +15,7 @@ int base_add(const big_decimal *value_1, const big_decimal *value_2, big_decimal
 int base_sub(const big_decimal *value_1, const big_decimal *value_2, big_decimal *result){
     result->scale = value_1->scale;
     int borrow = 0;
-    for (int i = 0; i < 224; i++) {
+    for (int i = 0; i < MAX_BIG_DECIMAL_MANTISSA; i++) {
         int num1 = get_bit_big(value_1, i);
         int num2 = get_bit_big(value_2, i);
         set_bit_big(result, i, borrow ^ num1 ^ num2);
@@ -25,7 +25,7 @@ int base_sub(const big_decimal *value_1, const big_decimal *value_2, big_decimal
     }
 
 int base_mull(big_decimal *value_1, big_decimal *value_2, big_decimal *result){
-    for (int i = 0; i < 96; i++) {
+    for (int i = 0; i < MAX_DECIMAL_MANTISSA; i++) {
         int num = get_bit_big(value_1, i);
         if (num == 1) {
             big_decimal tmp = *value_2;
@@ -52,7 +52,7 @@ int shift_left(big_decimal* decimal, int index) {
         }
     }
     for (int i = 0; i < index_shift && !overflow; i++) {
-        if (get_bit_big(decimal, 223 - i)) overflow = 1;
+        if (get_bit_big(decimal, MAX_IND_BIG_DECIMAL - i)) overflow = 1;
     }
     for (int i = 6; i >=0 && !overflow && index_shift != 0; i--){
         decimal->bits[i] <<= index_shift;
@@ -71,7 +71,7 @@ void to_big_decimal(const s21_decimal* decimal, big_decimal* b_decimal) {
 }
 
 int big_to_decimal(big_decimal* b_decimal, s21_decimal* decimal){
-    int code_error = 0;
+    int code_error = S21_OK;
     unsigned long long remainder = 0;
     int tail = 0;
     int round_done = 0;
@@ -86,13 +86,13 @@ int big_to_decimal(big_decimal* b_decimal, s21_decimal* decimal){
                 tail = 0;
             }
         } else if (get_sign(decimal)) {
-            code_error = 2;
-        } else code_error = 1;
+            code_error = S21_NEG_OVERFLOW;
+        } else code_error = S21_OVERFLOW;
     }
     while (b_decimal->scale > 28 && code_error == 0) {
         if (remainder) tail = 1;
         remainder = div_10_big_decimal(b_decimal);
-        if (is_zero_big_decimal(b_decimal) && is_bankers_round_big_decimal_up(b_decimal, remainder, tail) == 0) code_error = 2;
+        if (is_zero_big_decimal(b_decimal) && is_bankers_round_big_decimal_up(b_decimal, remainder, tail) == 0) code_error = S21_UNDERFLOW;
         if (b_decimal->scale == 28) {
             round_done = 1;
             bankers_round_big_decimal(b_decimal, remainder, tail);
