@@ -21,7 +21,7 @@ int base_sub(const big_decimal *value_1, const big_decimal *value_2, big_decimal
         set_bit_big(result, i, borrow ^ num1 ^ num2);
         borrow = ((~num1 & 1u) & num2) | (borrow & (~num1 & 1u)) | (borrow & num1 & num2);
     }
-    return 0;
+    return borrow;
     }
 
 int base_mull(big_decimal *value_1, big_decimal *value_2, big_decimal *result){
@@ -34,6 +34,40 @@ int base_mull(big_decimal *value_1, big_decimal *value_2, big_decimal *result){
         }
     }
     result->scale = value_1->scale + value_2->scale;
+    return 0;
+}
+
+int base_int_div(big_decimal *value_1, big_decimal *value_2, big_decimal *remainder, big_decimal *quotient) {
+    for (int i = 223; i >= 0; i--) {
+        shift_left(remainder, 1);
+        int temp = get_bit_big(value_1, i);
+        set_bit_big(remainder, 0, temp);
+        if (s21_is_greater_big_decimal(*remainder, *value_2) || s21_is_equal_big_decimal(*remainder, *value_2)){
+            base_sub(remainder, value_2, remainder);
+            shift_left(quotient, 1);
+            set_bit_big(quotient, 0, 1);
+        } else {
+            shift_left(quotient, 1);
+            set_bit_big(quotient, 0, 0);
+        }
+    }
+    return 0;
+}
+
+int base_fract_div(big_decimal *value_2, big_decimal *remainder, big_decimal *quotient) {
+    while(is_zero_big_decimal(remainder) == 0 && quotient->bits[6] < 0xfffffff) {
+        mull_10_big_decimal(remainder);
+        big_decimal digit = {{0}, 0};
+        unsigned bit = 0;
+
+        while (s21_is_greater_big_decimal(*remainder, *value_2) || s21_is_equal_big_decimal(*remainder, *value_2)) {
+            base_sub(remainder, value_2, remainder);
+            bit++;
+        }
+        digit.bits[0] = bit;
+        mull_10_big_decimal(quotient);
+        base_add(quotient, &digit, quotient); 
+    }
     return 0;
 }
 

@@ -72,32 +72,8 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
         to_big_decimal(&value_2, &big_value_2);
         if (big_value_1.scale < big_value_2.scale) s21_normalization_big_scale(&big_value_1, &big_value_2);
         quotient.scale = big_value_1.scale - big_value_2.scale;
-        for (int i = 223; i >= 0; i--) {
-            shift_left(&remainder, 1);
-            int temp = get_bit_big(&big_value_1, i);
-            set_bit_big(&remainder, 0, temp);
-            if (s21_is_greater_big_decimal(remainder, big_value_2) || s21_is_equal_big_decimal(remainder, big_value_2)){
-                base_sub(&remainder, &big_value_2, &remainder);
-                shift_left(&quotient, 1);
-                set_bit_big(&quotient, 0, 1);
-            } else {
-                shift_left(&quotient, 1);
-                set_bit_big(&quotient, 0, 0);
-            }
-        }
-        while(is_zero_big_decimal(&remainder) == 0 && quotient.bits[6] < 0xfffffff) {
-            mull_10_big_decimal(&remainder);
-            big_decimal digit = {{0}, 0};
-            unsigned bit = 0;
-
-            while (s21_is_greater_big_decimal(remainder, big_value_2) || s21_is_equal_big_decimal(remainder, big_value_2)) {
-                base_sub(&remainder, &big_value_2, &remainder);
-                bit++;
-            }
-            digit.bits[0] = bit;
-            mull_10_big_decimal(&quotient);
-            base_add(&quotient, &digit, &quotient); 
-        }
+        base_int_div(&big_value_1, &big_value_2, &remainder, &quotient);
+        base_fract_div(&big_value_2, &remainder, &quotient);
         res_div = big_to_decimal(&quotient, result);
     }
     return res_div;

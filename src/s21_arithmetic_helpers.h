@@ -20,6 +20,9 @@ int base_add(const big_decimal *value_1, const big_decimal *value_2, big_decimal
 int base_sub(const big_decimal *value_1, const big_decimal *value_2, big_decimal *result);
 int base_mull(big_decimal *value_1, big_decimal *value_2, big_decimal *result);
 
+int base_int_div(big_decimal *value_1, big_decimal *value_2, big_decimal *remainder, big_decimal *quotient);
+int base_fract_div(big_decimal *value_2, big_decimal *remainder, big_decimal *quotient);
+
 int shift_left(big_decimal* decimal, int index);
 
 void init_big_decimal(big_decimal *decimal);
