@@ -10,7 +10,10 @@ Suite *floor_suite(void);
 Suite *round_suite(void);
 Suite *truncate_suite(void);
 Suite *negate_suite(void);
-
+Suite *add_suite(void);
+Suite *sub_suite(void);
+Suite *mul_suite(void);
+Suite *div_suite(void);
 
 // Потом убрать этот блок
 // Suite *from_decimal_to_int_suite1(void);
@@ -56,7 +59,10 @@ int main(void) {
   srunner_add_suite(sr, round_suite());
   srunner_add_suite(sr, truncate_suite());
   srunner_add_suite(sr, negate_suite());
-
+  srunner_add_suite(sr, add_suite());
+  srunner_add_suite(sr, sub_suite());
+  srunner_add_suite(sr, mul_suite());
+  srunner_add_suite(sr, div_suite());
   
 
   //Потом убрать этот блок

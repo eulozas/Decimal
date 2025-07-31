@@ -89,7 +89,7 @@ int big_to_decimal(big_decimal* b_decimal, s21_decimal* decimal){
             code_error = S21_NEG_OVERFLOW;
         } else code_error = S21_OVERFLOW;
     }
-    while (b_decimal->scale > 28 && code_error == 0) {
+    while (b_decimal->scale > 28 && code_error == S21_OK) {
         if (remainder) tail = 1;
         remainder = div_10_big_decimal(b_decimal);
         if (is_zero_big_decimal(b_decimal) && is_bankers_round_big_decimal_up(b_decimal, remainder, tail) == 0) code_error = S21_UNDERFLOW;
@@ -98,10 +98,10 @@ int big_to_decimal(big_decimal* b_decimal, s21_decimal* decimal){
             bankers_round_big_decimal(b_decimal, remainder, tail);
         }
     }
-    if (code_error == 0 && round_done == 0) {
+    if (code_error == S21_OK && round_done == 0) {
         bankers_round_big_decimal(b_decimal, remainder, tail);
     }
-    if (code_error == 0) {
+    if (code_error == S21_OK) {
         for (int i = 0; i < 3; i++) {
             decimal->bits[i] = b_decimal->bits[i];
         }
