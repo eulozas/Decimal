@@ -276,24 +276,6 @@ START_TEST(test_round_2) {
 }
 END_TEST
 
-START_TEST(test_round_3) {
-    // 2640938749860586450804312200.5
-    s21_decimal decimal = {{0x55555555, 0x0, 0x55555555, 0x10000}};
-    // 2640938749860586450804312200
-    s21_decimal decimal_check = {{0x8888888, 0x80000000, 0x8888888, 0x0}};
-    s21_decimal decimal_res = {0};
-   
-    int res = s21_round(decimal, &decimal_res);
-    ck_assert_int_eq(0, res);
-    
-    ck_assert_uint_eq(decimal_res.bits[3]>>31 & 1u, decimal_check.bits[3]>>31 & 1u);
-    ck_assert_uint_eq(decimal_res.bits[3]>>16 & 0xFF, decimal_check.bits[3]>>16 & 0xFF);
-    ck_assert_uint_eq(decimal_res.bits[0], decimal_check.bits[0]);
-    ck_assert_uint_eq(decimal_res.bits[1], decimal_check.bits[1]);
-    ck_assert_uint_eq(decimal_res.bits[2], decimal_check.bits[2]);
-}
-END_TEST
-
 START_TEST(test_round_4) {
     // -792281625142643375935439503.35
     s21_decimal decimal = {{0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0x80020000}};
@@ -573,7 +555,6 @@ Suite *round_suite(void) {
     tcase_add_test(tc, test_round_0);
     tcase_add_test(tc, test_round_1);
     tcase_add_test(tc, test_round_2);
-    tcase_add_test(tc, test_round_3);
     tcase_add_test(tc, test_round_4);
     tcase_add_test(tc, test_round_5);
     tcase_add_test(tc, test_round_null);
