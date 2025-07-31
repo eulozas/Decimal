@@ -30,7 +30,7 @@ void s21_normalization_big_scale(big_decimal* value_1, big_decimal* value_2);
 int mantissa_96_bit(const big_decimal* b_decimal, unsigned long long remainder, int tail);
 void mull_10_value(big_decimal* value_1);
 int is_zero_big_decimal(big_decimal* b_decimal);
-unsigned long long div_10_big_decimal(big_decimal* b_decimal);
+unsigned div_10_big_decimal(big_decimal* b_decimal);
 int is_bankers_round_big_decimal_up(big_decimal* b_decimal, unsigned long long reminder, int tail);
 void bankers_round_big_decimal(big_decimal* b_decimal, unsigned long long reminder, int tail);
 

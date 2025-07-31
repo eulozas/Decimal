@@ -157,7 +157,7 @@ int mantissa_96_bit(const big_decimal* b_decimal, unsigned long long remainder, 
     return ret;
 }
 
-unsigned long long div_10_big_decimal(big_decimal* b_decimal) {
+unsigned div_10_big_decimal(big_decimal* b_decimal) {
     unsigned long long remainder = 0;
     for (int i = 6; i >= 0; i--) {
         unsigned long long current = (unsigned long long)b_decimal->bits[i] + (remainder << 32);
@@ -165,7 +165,7 @@ unsigned long long div_10_big_decimal(big_decimal* b_decimal) {
         remainder = current % 10;
     }
     b_decimal->scale--;
-    return remainder;
+    return (unsigned)remainder;
 }
 
 int is_zero_big_decimal(big_decimal* b_decimal) {
