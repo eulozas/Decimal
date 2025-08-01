@@ -66,7 +66,8 @@ cppcheck:
 
 # ===== Цель: проверка на утечки памяти с помощью valgrind =====
 valgrind: test_build
-	valgrind --tool=memcheck --leak-check=yes ./$(TEST_BIN)
+	CK_FORK=no valgrind --tool=memcheck --leak-check=yes ./$(TEST_BIN)
+# valgrind --tool=memcheck --leak-check=yes ./$(TEST_BIN)
 
 %_suite: test_build
 	CK_RUN_SUITE="$*" valgrind --tool=memcheck --leak-check=yes ./$(TEST_BIN)
