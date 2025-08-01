@@ -29,9 +29,9 @@ void set_bit(unsigned *bits, int index, int val) {
   }
 }
 
-void set_sign(s21_decimal *decimal) { set_bit(decimal->bits, 127, 1); }
-
-void clear_sign(s21_decimal *decimal) { set_bit(decimal->bits, 127, 0); }
+void set_sign(s21_decimal *decimal, int val) {
+  set_bit(decimal->bits, 127, val);
+}
 
 int get_sign(const s21_decimal *decimal) {
   return (decimal->bits[3] >> 31) & 1u;

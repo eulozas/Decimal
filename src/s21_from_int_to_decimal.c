@@ -8,7 +8,7 @@ int s21_from_int_to_decimal(int src, s21_decimal *dst) {
 
   unsigned int u_src;
   if (src < 0) {
-    set_sign(dst);
+    set_sign(dst, 1);
     u_src = ~(unsigned int)src + 1u;
   } else {
     u_src = (unsigned int)src;

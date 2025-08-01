@@ -8,7 +8,7 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {
   if (isnan(src) || isinf(src) || fabs((double)src) >= MAX_DECIMAL_VALUE_NEXT)
     exit_code = 1;
   if (!exit_code && src != 0.0f && fabsf(src) < 1e-28f) {
-    if (signbit(src)) set_sign(dst);
+    if (signbit(src)) set_sign(dst, 1);
     exit_code = 1;
   }
 
@@ -42,7 +42,7 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {
       write_mantissa_to_decimal(mantissa, dst);
     }
     if (scale > 0) set_scale(dst, scale);
-    if (signbit(src)) set_sign(dst);
+    if (signbit(src)) set_sign(dst, 1);
   }
   return exit_code;
 }

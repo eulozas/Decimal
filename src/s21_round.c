@@ -23,7 +23,7 @@ int s21_round(s21_decimal value, s21_decimal *result) {
       s21_decimal integer_part = {0};
       s21_decimal fractional_part = {0};
       if (sign) {
-        clear_sign(&value);
+        set_sign(&value, 0);
       }
       s21_truncate(value, &integer_part);
       s21_sub(value, integer_part, &fractional_part);
@@ -34,7 +34,7 @@ int s21_round(s21_decimal value, s21_decimal *result) {
       }
 
       if (sign) {
-        set_sign(result);
+        set_sign(result, 1);
       }
     }
   }

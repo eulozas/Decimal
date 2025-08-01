@@ -12,8 +12,7 @@
 void clear_decimal(s21_decimal *decimal);
 int get_bit(const unsigned *decimal, int index);
 void set_bit(unsigned *bits, int index, int val);
-void set_sign(s21_decimal *decimal);
-void clear_sign(s21_decimal *decimal);
+void set_sign(s21_decimal *decimal, int val);
 int get_sign(const s21_decimal *decimal);
 
 void set_scale(s21_decimal *decimal, int scale);

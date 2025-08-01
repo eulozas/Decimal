@@ -11,22 +11,22 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
                 big_result = {{0}, 0};
     to_big_decimal(&value_1, &big_value_1);
     to_big_decimal(&value_2, &big_value_2);
-    set_bit(value_1.bits, 127, 0);
-    set_bit(value_2.bits, 127, 0);
+    set_sign(&value_1, 0);
+    set_sign(&value_2, 0);
     s21_normalization_big_scale(&big_value_1, &big_value_2);
     if (sign1 == sign2) {
-      set_bit(result->bits, 127, sign1);
+      set_sign(result, sign1);
       base_add(&big_value_1, &big_value_2, &big_result);
       res_add = big_to_decimal(&big_result, result);
     } else {
       if (s21_is_greater(value_1, value_2)) {
-        set_bit(result->bits, 127, sign1);
+        set_sign(result, sign1);
         base_sub(&big_value_1, &big_value_2, &big_result);
         res_add = big_to_decimal(&big_result, result);
       } else if (s21_is_equal(value_1, value_2)) {
         to_zero(result);
       } else {
-        set_bit(result->bits, 127, sign2);
+        set_sign(result, sign2);
         base_sub(&big_value_2, &big_value_1, &big_result);
         res_add = big_to_decimal(&big_result, result);
       }
@@ -49,7 +49,7 @@ int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   else {
     int sign1 = get_sign(&value_1);
     int sign2 = get_sign(&value_2);
-    set_bit(result->bits, 127, sign1 ^ sign2);
+    set_sign(result, sign1 ^ sign2);
     big_decimal temp_value_1 = {{0}, 0}, temp_value_2 = {{0}, 0},
                 temp_result = {{0}, 0};
     to_big_decimal(&value_1, &temp_value_1);
@@ -70,7 +70,7 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   else {
     int sign1 = get_sign(&value_1);
     int sign2 = get_sign(&value_2);
-    set_bit(result->bits, 127, sign1 ^ sign2);
+    set_sign(result, sign1 ^ sign2);
     big_decimal remainder = {{0}, 0};
     big_decimal quotient = {{0}, 0};
     big_decimal big_value_1 = {{0}, 0}, big_value_2 = {{0}, 0};
