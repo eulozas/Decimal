@@ -19,12 +19,7 @@ int s21_is_greater(s21_decimal value_1, s21_decimal value_2){
         to_big_decimal(&value_1, &big_value_1);
         to_big_decimal(&value_2, &big_value_2);
         if(scale_value_1 != scale_value_2){
-            if(scale_value_1 < scale_value_2){
-                make_same_scales(&big_value_1, &scale_value_1, &scale_value_2);
-            }
-            else{
-                make_same_scales(&big_value_2, &scale_value_2, &scale_value_1);
-            }
+            s21_normalization_big_scale(&big_value_1,&big_value_2);
         }
         for(int i = 6; i >= 0; i--){
             if(big_value_1.bits[i] > big_value_2.bits[i]){
