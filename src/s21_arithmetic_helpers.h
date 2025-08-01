@@ -34,6 +34,6 @@ unsigned div_10_big_decimal(big_decimal* b_decimal);
 int is_bankers_round_big_decimal_up(big_decimal* b_decimal, unsigned long long reminder, int tail);
 void bankers_round_big_decimal(big_decimal* b_decimal, unsigned long long reminder, int tail);
 
-int s21_is_greater_big_decimal(big_decimal value_1, big_decimal value_2);
-int s21_is_equal_big_decimal(big_decimal value_1, big_decimal value_2);
+int s21_is_greater_or_equal_big_decimal(big_decimal value_1, big_decimal value_2);
+void s21_is_equal_mantissa(big_decimal value_1, big_decimal value_2, int *result, int *equal);
 #endif

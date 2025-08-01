@@ -42,7 +42,7 @@ int base_int_div(big_decimal *value_1, big_decimal *value_2, big_decimal *remain
         shift_left(remainder, 1);
         int temp = get_bit_big(value_1, i);
         set_bit_big(remainder, 0, temp);
-        if (s21_is_greater_big_decimal(*remainder, *value_2) || s21_is_equal_big_decimal(*remainder, *value_2)){
+        if (s21_is_greater_or_equal_big_decimal(*remainder, *value_2)){
             base_sub(remainder, value_2, remainder);
             shift_left(quotient, 1);
             set_bit_big(quotient, 0, 1);
@@ -59,8 +59,7 @@ int base_fract_div(big_decimal *value_2, big_decimal *remainder, big_decimal *qu
         mull_10_big_decimal(remainder);
         big_decimal digit = {{0}, 0};
         unsigned bit = 0;
-
-        while (s21_is_greater_big_decimal(*remainder, *value_2) || s21_is_equal_big_decimal(*remainder, *value_2)) {
+        while (s21_is_greater_or_equal_big_decimal(*remainder, *value_2)) {
             base_sub(remainder, value_2, remainder);
             bit++;
         }
@@ -193,35 +192,29 @@ void bankers_round_big_decimal(big_decimal* b_decimal, unsigned long long remain
     }
 }
 
-int s21_is_greater_big_decimal(big_decimal value_1, big_decimal value_2) {
+int s21_is_greater_or_equal_big_decimal(big_decimal value_1, big_decimal value_2) {
     int result = 1;
     int equal = 0;
-    for(int i = 6; i >= 0; i--){
-        if(value_1.bits[i] > value_2.bits[i]){
-            result = 1;
-            break;
-        }
-        else if(value_1.bits[i] < value_2.bits[i]){
-            result = 0;
-            break;
-        }
-        else{
-            equal++;
-        }
-    }
+    s21_is_equal_mantissa(value_1, value_2, &result, &equal);
     if(equal == 7){
-        result = 0;
+        result = 1;
     }
     return result;
 }
 
-int s21_is_equal_big_decimal(big_decimal value_1, big_decimal value_2){
-    int result = 1;
+
+void s21_is_equal_mantissa(big_decimal value_1, big_decimal value_2, int *result, int *equal) {
     for(int i = 6; i >= 0; i--){
-        if(value_1.bits[i] != value_2.bits[i]){
-            result = 0;
+        if(value_1.bits[i] > value_2.bits[i]){
+            *result = 1;
             break;
         }
+        else if(value_1.bits[i] < value_2.bits[i]){
+            *result = 0;
+            break;
+        }
+        else{
+            (*equal)++;
+        }
     }
-    return result;
 }

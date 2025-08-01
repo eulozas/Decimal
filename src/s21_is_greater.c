@@ -21,19 +21,7 @@ int s21_is_greater(s21_decimal value_1, s21_decimal value_2){
         if(scale_value_1 != scale_value_2){
             s21_normalization_big_scale(&big_value_1,&big_value_2);
         }
-        for(int i = 6; i >= 0; i--){
-            if(big_value_1.bits[i] > big_value_2.bits[i]){
-                result = 1;
-                break;
-            }
-            else if(big_value_1.bits[i] < big_value_2.bits[i]){
-                result = 0;
-                break;
-            }
-            else{
-                equal++;
-            }
-        }
+        s21_is_equal_mantissa(big_value_1, big_value_2, &result, &equal);
         if(sign_value_1){
             if(result){
                 result = 0;
