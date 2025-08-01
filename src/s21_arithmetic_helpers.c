@@ -151,36 +151,6 @@ void init_big_decimal(big_decimal *decimal) {
     decimal->scale = 0u;
 }
 
-void s21_normalization_big_scale(big_decimal* value_1, big_decimal* value_2) {
-    while (value_1->scale > value_2->scale) {
-        mull_10_big_decimal(value_2);
-    }
-    while (value_2->scale > value_1->scale) {
-        mull_10_big_decimal(value_1);
-    }
-}
-
-void mull_10_value(big_decimal* value_1){
-    int overflow = 0;
-
-    for(int i = 0; i < 7; i++){
-        uint64_t buffer = (uint64_t)value_1->bits[i] * 10 + overflow;
-        value_1->bits[i] = (uint32_t)buffer & 0xFFFFFFFF;
-        overflow = buffer >> 32;
-    }
-    value_1->scale++;
-}
-
-
-void mull_10_big_decimal(big_decimal* b_decimal) {
-    big_decimal tmp1 = *b_decimal;
-    big_decimal tmp2 = *b_decimal;
-    shift_left(&tmp1, 3);
-    shift_left(&tmp2, 1);
-    base_add(&tmp1, &tmp2, b_decimal);
-    b_decimal->scale++;
-}
-
 int mantissa_96_bit(const big_decimal* b_decimal, unsigned long long remainder, int tail) {
     big_decimal tmp = *b_decimal;
     bankers_round_big_decimal(&tmp, remainder, tail);

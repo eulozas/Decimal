@@ -23,15 +23,12 @@ int base_mull(big_decimal *value_1, big_decimal *value_2, big_decimal *result);
 int base_int_div(big_decimal *value_1, big_decimal *value_2, big_decimal *remainder, big_decimal *quotient);
 int base_fract_div(big_decimal *value_2, big_decimal *remainder, big_decimal *quotient);
 
-int shift_left(big_decimal* decimal, int index);
-
 void init_big_decimal(big_decimal *decimal);
 void to_big_decimal(const s21_decimal* decimal, big_decimal* b_decimal);
 int big_to_decimal(big_decimal* b_decimal, s21_decimal* decimal);
 
-void s21_normalization_big_scale(big_decimal* value_1, big_decimal* value_2);
+int shift_left(big_decimal* decimal, int index);
 int mantissa_96_bit(const big_decimal* b_decimal, unsigned long long remainder, int tail);
-void mull_10_value(big_decimal* value_1);
 int is_zero_big_decimal(big_decimal* b_decimal);
 unsigned div_10_big_decimal(big_decimal* b_decimal);
 int is_bankers_round_big_decimal_up(big_decimal* b_decimal, unsigned long long reminder, int tail);

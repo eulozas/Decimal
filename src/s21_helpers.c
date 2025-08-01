@@ -56,48 +56,43 @@ void set_bit_big(big_decimal *decimal, int index, int val){
 }
 
 void set_sign(s21_decimal* decimal){
-    if (!decimal) return;//?????
     set_bit(decimal, 127, 1);
 }
 
 void clear_sign(s21_decimal* decimal){
-    if (!decimal) return;//?????
     set_bit(decimal, 127, 0);
 }
 
 int get_sign(const s21_decimal *decimal){
-    if (!decimal) return 0;//?????
     return (decimal->bits[3]>>31) & 1u;
 }
 
 int get_scale(const s21_decimal *decimal){
-    if (!decimal) return 0;//?????
     return (decimal->bits[3] >> 16) & 0xFF;
 }
 
-void mul_10_value(big_decimal* value_1){
-    int overflow = 0;
+void set_scale(s21_decimal *decimal, int scale) {
+    decimal->bits[3] |= (scale << 16);
+}
 
-    for(int i = 0; i < 7; i++){
-        uint64_t buffer = (uint64_t)value_1->bits[i] * 10 + overflow;
-        value_1->bits[i] = (uint32_t)buffer & 0xFFFFFFFF;
-        overflow = buffer >> 32;
+void s21_normalization_big_scale(big_decimal* value_1, big_decimal* value_2) {
+    while (value_1->scale > value_2->scale) {
+        mull_10_big_decimal(value_2);
+    }
+    while (value_2->scale > value_1->scale) {
+        mull_10_big_decimal(value_1);
     }
 }
 
-// void to_big_decimal(const s21_decimal* decimal, big_decimal* big_decimal) {
-//     for (int i = 0; i < 3; i++) {
-//         big_decimal->bits[i] = decimal->bits[i];
-//     }
-//     big_decimal->scale = get_scale(decimal);
-// }
-
-void make_same_scales(big_decimal* value_1, int* scale_value_1, int* scale_value_2){
-    while(*scale_value_1 < *scale_value_2){
-        mul_10_value(value_1);
-        (*scale_value_1)++;
-    }
+void mull_10_big_decimal(big_decimal* b_decimal) {
+    big_decimal tmp1 = *b_decimal;
+    big_decimal tmp2 = *b_decimal;
+    shift_left(&tmp1, 3);
+    shift_left(&tmp2, 1);
+    base_add(&tmp1, &tmp2, b_decimal);
+    b_decimal->scale++;
 }
+
 
 int is_zero(const s21_decimal* decimal){
     return decimal->bits[0] == 0 && decimal->bits[1] == 0 && decimal->bits[2] == 0;
@@ -108,13 +103,6 @@ void to_zero(s21_decimal* decimal) {
         decimal->bits[i] = 0;
     }
 }
-
-void set_scale(s21_decimal *decimal, int scale) {
-    // if (!decimal) return;//?????
-    // decimal->bits[3] &= ~(0xFF << 16);
-    decimal->bits[3] |= (scale << 16);
-}
-
 
 int count_digits_before_point(unsigned long long n) {
     int count = 0;
