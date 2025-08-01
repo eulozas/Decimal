@@ -5,8 +5,8 @@ int base_add(const big_decimal *value_1, const big_decimal *value_2,
   result->scale = value_1->scale;
   int carry = 0;
   for (int i = 0; i < MAX_BIG_DECIMAL_MANTISSA; i++) {
-    int num1 = get_bit_big(value_1, i);
-    int num2 = get_bit_big(value_2, i);
+    int num1 = get_bit(value_1->bits, i);
+    int num2 = get_bit(value_2->bits, i);
     set_bit_big(result, i, num1 ^ num2 ^ carry);
     carry = (num1 & num2) | (num1 & carry) | (num2 & carry);
   }
@@ -18,8 +18,8 @@ int base_sub(const big_decimal *value_1, const big_decimal *value_2,
   result->scale = value_1->scale;
   int borrow = 0;
   for (int i = 0; i < MAX_BIG_DECIMAL_MANTISSA; i++) {
-    int num1 = get_bit_big(value_1, i);
-    int num2 = get_bit_big(value_2, i);
+    int num1 = get_bit(value_1->bits, i);
+    int num2 = get_bit(value_2->bits, i);
     set_bit_big(result, i, borrow ^ num1 ^ num2);
     borrow = ((~num1 & 1u) & num2) | (borrow & (~num1 & 1u)) |
              (borrow & num1 & num2);
@@ -30,7 +30,7 @@ int base_sub(const big_decimal *value_1, const big_decimal *value_2,
 int base_mull(const big_decimal *value_1, const big_decimal *value_2,
               big_decimal *result) {
   for (int i = 0; i < MAX_DECIMAL_MANTISSA; i++) {
-    int num = get_bit_big(value_1, i);
+    int num = get_bit(value_1->bits, i);
     if (num == 1) {
       big_decimal tmp = *value_2;
       shift_left(&tmp, i);
@@ -45,7 +45,7 @@ int base_int_div(const big_decimal *value_1, const big_decimal *value_2,
                  big_decimal *remainder, big_decimal *quotient) {
   for (int i = 223; i >= 0; i--) {
     shift_left(remainder, 1);
-    int temp = get_bit_big(value_1, i);
+    int temp = get_bit(value_1->bits, i);
     set_bit_big(remainder, 0, temp);
     if (s21_is_greater_or_equal_big_decimal(*remainder, *value_2)) {
       base_sub(remainder, value_2, remainder);
@@ -92,7 +92,7 @@ int shift_left(big_decimal *decimal, int index) {
     }
   }
   for (int i = 0; i < index_shift && !overflow; i++) {
-    if (get_bit_big(decimal, MAX_IND_BIG_DECIMAL - i)) overflow = 1;
+    if (get_bit(decimal->bits, MAX_IND_BIG_DECIMAL - i)) overflow = 1;
   }
   for (int i = 6; i >= 0 && !overflow && index_shift != 0; i--) {
     decimal->bits[i] <<= index_shift;

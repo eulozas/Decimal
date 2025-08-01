@@ -10,18 +10,11 @@ void clear_decimal(s21_decimal *decimal) {
   }
 }
 
-int get_bit(const s21_decimal *decimal, int index) {
+int get_bit(const unsigned *decimal, int index) {
   int bit_index = index % 32;
   int bit_number = index / 32;
 
-  return (decimal->bits[bit_number] >> bit_index) & 1u;
-}
-
-int get_bit_big(const big_decimal *decimal, int index) {
-  int bit_index = index % 32;
-  int bit_number = index / 32;
-
-  return (decimal->bits[bit_number] >> bit_index) & 1u;
+  return (decimal[bit_number] >> bit_index) & 1u;
 }
 
 void set_bit(s21_decimal *decimal, int index, int val) {
@@ -182,12 +175,12 @@ int divide_by_10(unsigned int *high, unsigned int *mid, unsigned int *low) {
 int check_free_decimal_bit(s21_decimal decimal) {
   int res = 0;
   for (int i = 96; i < 112 && !res; i++) {
-    if (get_bit(&decimal, i)) {
+    if (get_bit(decimal.bits, i)) {
       res = 1;
     }
   }
   for (int i = 120; i < 127 && !res; i++) {
-    if (get_bit(&decimal, i)) {
+    if (get_bit(decimal.bits, i)) {
       res = 1;
     }
   }

@@ -10,7 +10,7 @@
 #define SCL 0x00ff0000
 
 void clear_decimal(s21_decimal *decimal);
-int get_bit(const s21_decimal *decimal, int index);
+int get_bit(const unsigned *decimal, int index);
 void set_bit(s21_decimal *decimal, int index, int val);
 void set_sign(s21_decimal *decimal);
 void clear_sign(s21_decimal *decimal);
@@ -33,7 +33,6 @@ int check_free_decimal_bit(s21_decimal decimal);
 void increment_decimal_bits(unsigned int *low, unsigned int *mid,
                             unsigned int *high);
 
-int get_bit_big(const big_decimal *decimal, int index);
 void set_bit_big(big_decimal *decimal, int index, int val);
 void mull_10_big_decimal(big_decimal *b_decimal);
 
