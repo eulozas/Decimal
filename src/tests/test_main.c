@@ -47,7 +47,6 @@ Suite *div_suite(void);
 // Suite *floor_suite2(void);
 // Suite *floor_suite3(void);
 
-
 int main(void) {
   int number_failed = 0;
   SRunner *sr = srunner_create(from_float_to_decimal());
@@ -63,13 +62,12 @@ int main(void) {
   srunner_add_suite(sr, sub_suite());
   srunner_add_suite(sr, mul_suite());
   srunner_add_suite(sr, div_suite());
-  
 
-  //Потом убрать этот блок
-  // srunner_add_suite(sr, from_decimal_to_int_suite1());
-  // srunner_add_suite(sr, from_decimal_to_int_suite2());
-  // srunner_add_suite(sr, from_decimal_to_int_suite3());
-  // srunner_add_suite(sr, from_decimal_to_int_suite4());
+  // Потом убрать этот блок
+  //  srunner_add_suite(sr, from_decimal_to_int_suite1());
+  //  srunner_add_suite(sr, from_decimal_to_int_suite2());
+  //  srunner_add_suite(sr, from_decimal_to_int_suite3());
+  //  srunner_add_suite(sr, from_decimal_to_int_suite4());
 
   // srunner_add_suite(sr, from_decimal_to_float_suite1());
   // srunner_add_suite(sr, from_decimal_to_float_suite2());

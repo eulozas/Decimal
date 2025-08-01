@@ -1,20 +1,21 @@
 #include <check.h>
+
 #include "../s21_decimal.h"
 #include "s21_arithmetic_helpers.h"
 #include "s21_helpers.h"
 
 START_TEST(test_add_1) {
-    // 79228162514264337593543950335
-    s21_decimal value_1 = {{0xffffffff, 0xffffffff, 0xffffffff, 0x0}};
-    // 0.49
-    s21_decimal value_2 = {{0x31, 0x0, 0x0, 0x20000}};
-    s21_decimal result = {{0}};
-    // 79228162514264337593543950335
-    s21_decimal expected = {{0xffffffff, 0xffffffff, 0xffffffff, 0x0}};
-    int s21_code_return = s21_add(value_1, value_2, &result);
-    ck_assert_int_eq(s21_code_return, S21_OK);
-    ck_assert_int_eq(s21_is_equal(result, expected), 1);
-  }
+  // 79228162514264337593543950335
+  s21_decimal value_1 = {{0xffffffff, 0xffffffff, 0xffffffff, 0x0}};
+  // 0.49
+  s21_decimal value_2 = {{0x31, 0x0, 0x0, 0x20000}};
+  s21_decimal result = {{0}};
+  // 79228162514264337593543950335
+  s21_decimal expected = {{0xffffffff, 0xffffffff, 0xffffffff, 0x0}};
+  int s21_code_return = s21_add(value_1, value_2, &result);
+  ck_assert_int_eq(s21_code_return, S21_OK);
+  ck_assert_int_eq(s21_is_equal(result, expected), 1);
+}
 END_TEST
 
 START_TEST(test_add_2) {
@@ -148,22 +149,22 @@ START_TEST(test_add_uncorrect_3) {
 }
 END_TEST
 
-  Suite *add_suite(void) {
-    Suite *s = suite_create("s21_add");
-    TCase *tc = tcase_create("Core");
-  
-    tcase_add_test(tc, test_add_1);
-    tcase_add_test(tc, test_add_2);
-    tcase_add_test(tc, test_add_3);
-    tcase_add_test(tc, test_add_4);
-    tcase_add_test(tc, test_add_5);
-    tcase_add_test(tc, test_add_6);
-    tcase_add_test(tc, test_add_7);
-    tcase_add_test(tc, test_add_8);
-    tcase_add_test(tc, test_add_uncorrect_1);
-    tcase_add_test(tc, test_add_uncorrect_2);
-    tcase_add_test(tc, test_add_uncorrect_3);
-  
-    suite_add_tcase(s, tc);
-    return s;
-  }
+Suite *add_suite(void) {
+  Suite *s = suite_create("s21_add");
+  TCase *tc = tcase_create("Core");
+
+  tcase_add_test(tc, test_add_1);
+  tcase_add_test(tc, test_add_2);
+  tcase_add_test(tc, test_add_3);
+  tcase_add_test(tc, test_add_4);
+  tcase_add_test(tc, test_add_5);
+  tcase_add_test(tc, test_add_6);
+  tcase_add_test(tc, test_add_7);
+  tcase_add_test(tc, test_add_8);
+  tcase_add_test(tc, test_add_uncorrect_1);
+  tcase_add_test(tc, test_add_uncorrect_2);
+  tcase_add_test(tc, test_add_uncorrect_3);
+
+  suite_add_tcase(s, tc);
+  return s;
+}

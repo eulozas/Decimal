@@ -1,20 +1,20 @@
 #ifndef S21_HELPERS_H
 #define S21_HELPERS_H
 
-#include "s21_decimal.h"
-#include "s21_arithmetic_helpers.h"
 #include <math.h>
 
+#include "s21_arithmetic_helpers.h"
+#include "s21_decimal.h"
 
 #define MINUS 0x80000000
 #define SCL 0x00ff0000
 
 void clear_decimal(s21_decimal *decimal);
-void* print_bits_32(const s21_decimal *decimal);
+void *print_bits_32(const s21_decimal *decimal);
 int get_bit(const s21_decimal *decimal, int index);
 void set_bit(s21_decimal *decimal, int index, int val);
-void set_sign(s21_decimal* decimal);
-void clear_sign(s21_decimal* decimal);
+void set_sign(s21_decimal *decimal);
+void clear_sign(s21_decimal *decimal);
 int get_sign(const s21_decimal *decimal);
 
 void set_scale(s21_decimal *decimal, int scale);
@@ -24,19 +24,21 @@ int count_digits_before_point(unsigned long long n);
 int find_point_index(double x);
 void normalize_mantissa(unsigned long long *mantissa, int *scale);
 void mul_decimal_by_10_and_carry_bits(s21_decimal *decimal);
-void write_mantissa_to_decimal(unsigned long long mantissa, s21_decimal *decimal);
+void write_mantissa_to_decimal(unsigned long long mantissa,
+                               s21_decimal *decimal);
 int divide_by_10(unsigned int *high, unsigned int *mid, unsigned int *low);
-int is_zero(const s21_decimal* decimal);
-void to_zero(s21_decimal* decimal);
-void to_big_decimal(const s21_decimal* decimal, big_decimal* big_decimal);
+int is_zero(const s21_decimal *decimal);
+void to_zero(s21_decimal *decimal);
+void to_big_decimal(const s21_decimal *decimal, big_decimal *big_decimal);
 void init_big_decimal(big_decimal *decimal);
 int check_free_decimal_bit(s21_decimal decimal);
-void increment_decimal_bits(unsigned int *low, unsigned int *mid, unsigned int *high);
+void increment_decimal_bits(unsigned int *low, unsigned int *mid,
+                            unsigned int *high);
 int is_even(s21_decimal value);
 
 int get_bit_big(const big_decimal *decimal, int index);
 void set_bit_big(big_decimal *decimal, int index, int val);
-void mull_10_big_decimal(big_decimal* b_decimal);
+void mull_10_big_decimal(big_decimal *b_decimal);
 
-void s21_normalization_big_scale(big_decimal* value_1, big_decimal* value_2);
+void s21_normalization_big_scale(big_decimal *value_1, big_decimal *value_2);
 #endif

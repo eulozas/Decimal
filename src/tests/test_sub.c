@@ -1,8 +1,8 @@
 #include <check.h>
+
 #include "../s21_decimal.h"
 #include "s21_arithmetic_helpers.h"
 #include "s21_helpers.h"
-
 
 START_TEST(test_sub_1) {
   // 39614081257132168796771975167
@@ -73,7 +73,6 @@ START_TEST(test_sub_5) {
   ck_assert_int_eq(s21_is_equal(result, expected), 1);
 }
 END_TEST
-
 
 START_TEST(test_sub_uncorrect_1) {
   // 39614081257132168796771975168

@@ -9,15 +9,14 @@
 #define POW_2_32 4294967296.0
 #define POW_2_64 18446744073709551616.0
 
-typedef struct{
-    unsigned int bits[4];
+typedef struct {
+  unsigned int bits[4];
 } s21_decimal;
 
-typedef struct{
-    unsigned bits[7];
-    unsigned scale;
+typedef struct {
+  unsigned bits[7];
+  unsigned scale;
 } big_decimal;
-
 
 int s21_from_int_to_decimal(int src, s21_decimal *dst);
 int s21_from_float_to_decimal(float src, s21_decimal *dst);
