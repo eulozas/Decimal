@@ -10,7 +10,6 @@
 #define SCL 0x00ff0000
 
 void clear_decimal(s21_decimal *decimal);
-void *print_bits_32(const s21_decimal *decimal);
 int get_bit(const s21_decimal *decimal, int index);
 void set_bit(s21_decimal *decimal, int index, int val);
 void set_sign(s21_decimal *decimal);
@@ -29,12 +28,10 @@ void write_mantissa_to_decimal(unsigned long long mantissa,
 int divide_by_10(unsigned int *high, unsigned int *mid, unsigned int *low);
 int is_zero(const s21_decimal *decimal);
 void to_zero(s21_decimal *decimal);
-void to_big_decimal(const s21_decimal *decimal, big_decimal *big_decimal);
 void init_big_decimal(big_decimal *decimal);
 int check_free_decimal_bit(s21_decimal decimal);
 void increment_decimal_bits(unsigned int *low, unsigned int *mid,
                             unsigned int *high);
-int is_even(s21_decimal value);
 
 int get_bit_big(const big_decimal *decimal, int index);
 void set_bit_big(big_decimal *decimal, int index, int val);

@@ -27,7 +27,8 @@ int base_sub(const big_decimal *value_1, const big_decimal *value_2,
   return borrow;
 }
 
-int base_mull(big_decimal *value_1, big_decimal *value_2, big_decimal *result) {
+int base_mull(const big_decimal *value_1, const big_decimal *value_2,
+              big_decimal *result) {
   for (int i = 0; i < MAX_DECIMAL_MANTISSA; i++) {
     int num = get_bit_big(value_1, i);
     if (num == 1) {
@@ -40,7 +41,7 @@ int base_mull(big_decimal *value_1, big_decimal *value_2, big_decimal *result) {
   return 0;
 }
 
-int base_int_div(big_decimal *value_1, big_decimal *value_2,
+int base_int_div(const big_decimal *value_1, const big_decimal *value_2,
                  big_decimal *remainder, big_decimal *quotient) {
   for (int i = 223; i >= 0; i--) {
     shift_left(remainder, 1);
@@ -58,7 +59,7 @@ int base_int_div(big_decimal *value_1, big_decimal *value_2,
   return 0;
 }
 
-int base_fract_div(big_decimal *value_2, big_decimal *remainder,
+int base_fract_div(const big_decimal *value_2, big_decimal *remainder,
                    big_decimal *quotient) {
   while (is_zero_big_decimal(remainder) == 0 && quotient->bits[6] < 0xfffffff) {
     mull_10_big_decimal(remainder);
@@ -111,7 +112,7 @@ void to_big_decimal(const s21_decimal *decimal, big_decimal *b_decimal) {
 
 int big_to_decimal(big_decimal *b_decimal, s21_decimal *decimal) {
   int code_error = S21_OK;
-  unsigned long long remainder = 0;
+  unsigned remainder = 0;
   int tail = 0;
   int round_done = 0;
   while (mantissa_96_bit(b_decimal, remainder, tail) && code_error == 0) {
@@ -159,7 +160,7 @@ void init_big_decimal(big_decimal *decimal) {
   decimal->scale = 0u;
 }
 
-int mantissa_96_bit(const big_decimal *b_decimal, unsigned long long remainder,
+int mantissa_96_bit(const big_decimal *b_decimal, unsigned remainder,
                     int tail) {
   big_decimal tmp = *b_decimal;
   bankers_round_big_decimal(&tmp, remainder, tail);
@@ -182,7 +183,7 @@ unsigned div_10_big_decimal(big_decimal *b_decimal) {
   return (unsigned)remainder;
 }
 
-int is_zero_big_decimal(big_decimal *b_decimal) {
+int is_zero_big_decimal(const big_decimal *b_decimal) {
   int ret = 1;
   for (int i = 0; i < 7 && ret; i++) {
     if (b_decimal->bits[i] != 0u) ret = 0;
@@ -190,14 +191,14 @@ int is_zero_big_decimal(big_decimal *b_decimal) {
   return ret;
 }
 
-int is_bankers_round_big_decimal_up(big_decimal *b_decimal,
-                                    unsigned long long remainder, int tail) {
+int is_bankers_round_big_decimal_up(big_decimal *b_decimal, unsigned remainder,
+                                    int tail) {
   return (remainder > 5 ||
           (remainder == 5 && ((b_decimal->bits[0] & 1u) || tail)));
 }
 
-void bankers_round_big_decimal(big_decimal *b_decimal,
-                               unsigned long long remainder, int tail) {
+void bankers_round_big_decimal(big_decimal *b_decimal, unsigned remainder,
+                               int tail) {
   if (is_bankers_round_big_decimal_up(b_decimal, remainder, tail)) {
     big_decimal tmp;
     init_big_decimal(&tmp);

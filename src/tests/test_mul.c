@@ -1,8 +1,8 @@
 #include <check.h>
 
+#include "../s21_arithmetic_helpers.h"
 #include "../s21_decimal.h"
-#include "s21_arithmetic_helpers.h"
-#include "s21_helpers.h"
+#include "../s21_helpers.h"
 
 START_TEST(test_mul_1) {
   // 0.1
