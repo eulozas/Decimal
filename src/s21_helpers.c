@@ -17,35 +17,21 @@ int get_bit(const unsigned *decimal, int index) {
   return (decimal[bit_number] >> bit_index) & 1u;
 }
 
-void set_bit(s21_decimal *decimal, int index, int val) {
+void set_bit(unsigned *bits, int index, int val) {
   int bit_index = index % 32;
   int bit_number = index / 32;
-
-  unsigned int mask = 1u << bit_index;
+  unsigned mask = 1u << bit_index;
 
   if (val) {
-    decimal->bits[bit_number] = decimal->bits[bit_number] | mask;
+    bits[bit_number] |= mask;
   } else {
-    decimal->bits[bit_number] = decimal->bits[bit_number] & ~mask;
+    bits[bit_number] &= ~mask;
   }
 }
 
-void set_bit_big(big_decimal *decimal, int index, int val) {
-  int bit_index = index % 32;
-  int bit_number = index / 32;
+void set_sign(s21_decimal *decimal) { set_bit(decimal->bits, 127, 1); }
 
-  unsigned int mask = 1u << bit_index;
-
-  if (val) {
-    decimal->bits[bit_number] = decimal->bits[bit_number] | mask;
-  } else {
-    decimal->bits[bit_number] = decimal->bits[bit_number] & ~mask;
-  }
-}
-
-void set_sign(s21_decimal *decimal) { set_bit(decimal, 127, 1); }
-
-void clear_sign(s21_decimal *decimal) { set_bit(decimal, 127, 0); }
+void clear_sign(s21_decimal *decimal) { set_bit(decimal->bits, 127, 0); }
 
 int get_sign(const s21_decimal *decimal) {
   return (decimal->bits[3] >> 31) & 1u;

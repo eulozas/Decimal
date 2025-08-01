@@ -7,7 +7,7 @@ int base_add(const big_decimal *value_1, const big_decimal *value_2,
   for (int i = 0; i < MAX_BIG_DECIMAL_MANTISSA; i++) {
     int num1 = get_bit(value_1->bits, i);
     int num2 = get_bit(value_2->bits, i);
-    set_bit_big(result, i, num1 ^ num2 ^ carry);
+    set_bit(result->bits, i, num1 ^ num2 ^ carry);
     carry = (num1 & num2) | (num1 & carry) | (num2 & carry);
   }
   return carry;
@@ -20,7 +20,7 @@ int base_sub(const big_decimal *value_1, const big_decimal *value_2,
   for (int i = 0; i < MAX_BIG_DECIMAL_MANTISSA; i++) {
     int num1 = get_bit(value_1->bits, i);
     int num2 = get_bit(value_2->bits, i);
-    set_bit_big(result, i, borrow ^ num1 ^ num2);
+    set_bit(result->bits, i, borrow ^ num1 ^ num2);
     borrow = ((~num1 & 1u) & num2) | (borrow & (~num1 & 1u)) |
              (borrow & num1 & num2);
   }
@@ -46,14 +46,14 @@ int base_int_div(const big_decimal *value_1, const big_decimal *value_2,
   for (int i = 223; i >= 0; i--) {
     shift_left(remainder, 1);
     int temp = get_bit(value_1->bits, i);
-    set_bit_big(remainder, 0, temp);
+    set_bit(remainder->bits, 0, temp);
     if (s21_is_greater_or_equal_big_decimal(*remainder, *value_2)) {
       base_sub(remainder, value_2, remainder);
       shift_left(quotient, 1);
-      set_bit_big(quotient, 0, 1);
+      set_bit(quotient->bits, 0, 1);
     } else {
       shift_left(quotient, 1);
-      set_bit_big(quotient, 0, 0);
+      set_bit(quotient->bits, 0, 0);
     }
   }
   return 0;
