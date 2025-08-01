@@ -28,7 +28,7 @@ int s21_truncate(s21_decimal value, s21_decimal *result) {
       }
 
       if (sign) {
-        set_sign(result, 1);
+        set_sign(result, sign);
       }
 
       result->bits[0] = low;

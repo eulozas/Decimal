@@ -31,8 +31,6 @@ void init_big_decimal(big_decimal *decimal);
 int check_free_decimal_bit(s21_decimal decimal);
 void increment_decimal_bits(unsigned int *low, unsigned int *mid,
                             unsigned int *high);
-
-// void set_bit_big(big_decimal *decimal, int index, int val);
 void mull_10_big_decimal(big_decimal *b_decimal);
 
 void s21_normalization_big_scale(big_decimal *value_1, big_decimal *value_2);
