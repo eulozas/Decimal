@@ -220,13 +220,14 @@ int s21_is_greater_or_equal_big_decimal(big_decimal value_1,
 
 void s21_is_equal_mantissa(big_decimal value_1, big_decimal value_2,
                            int *result, int *equal) {
-  for (int i = 6; i >= 0; i--) {
+  int flag_end = 1;
+  for (int i = 6; i >= 0 && flag_end; i--) {
     if (value_1.bits[i] > value_2.bits[i]) {
       *result = 1;
-      break;
+      flag_end = 0;
     } else if (value_1.bits[i] < value_2.bits[i]) {
       *result = 0;
-      break;
+      flag_end = 0;
     } else {
       (*equal)++;
     }
