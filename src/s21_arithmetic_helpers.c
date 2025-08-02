@@ -92,7 +92,8 @@ int shift_left(big_decimal *decimal, int index) {
     }
   }
   for (int i = 0; i < index_shift && !overflow; i++) {
-    if (get_bit(decimal->bits, MAX_IND_BIG_DECIMAL - i)) overflow = 1;
+    if (get_bit(decimal->bits, MAX_IND_BIG_DECIMAL - i))
+      overflow = 1;
   }
   for (int i = 6; i >= 0 && !overflow && index_shift != 0; i--) {
     decimal->bits[i] <<= index_shift;
@@ -114,36 +115,27 @@ int big_to_decimal(big_decimal *b_decimal, s21_decimal *decimal) {
   int code_error = S21_OK;
   unsigned remainder = 0;
   int tail = 0;
-  int round_done = 0;
   while (mantissa_96_bit(b_decimal, remainder, tail) && code_error == 0) {
     if (b_decimal->scale > 0) {
-      if (remainder) tail = 1;
+      if (remainder)
+        tail = 1;
       remainder = div_10_decimal(b_decimal->bits, 6);
       b_decimal->scale--;
-      if (b_decimal->scale == 0) {
-        round_done = 1;
-        bankers_round_big_decimal(b_decimal, remainder, tail);
-        remainder = 0;
-        tail = 0;
-      }
     } else if (get_sign(decimal)) {
       code_error = S21_NEG_OVERFLOW;
     } else
       code_error = S21_OVERFLOW;
   }
   while (b_decimal->scale > 28 && code_error == S21_OK) {
-    if (remainder) tail = 1;
+    if (remainder)
+      tail = 1;
     remainder = div_10_decimal(b_decimal->bits, 6);
     b_decimal->scale--;
     if (is_zero_big_decimal(b_decimal) &&
         is_bankers_round_big_decimal_up(b_decimal, remainder, tail) == 0)
       code_error = S21_UNDERFLOW;
-    if (b_decimal->scale == 28) {
-      round_done = 1;
-      bankers_round_big_decimal(b_decimal, remainder, tail);
-    }
   }
-  if (code_error == S21_OK && round_done == 0) {
+  if (code_error == S21_OK) {
     bankers_round_big_decimal(b_decimal, remainder, tail);
   }
   if (code_error == S21_OK) {
@@ -168,7 +160,8 @@ int mantissa_96_bit(const big_decimal *b_decimal, unsigned remainder,
   bankers_round_big_decimal(&tmp, remainder, tail);
   int ret = 0;
   for (int i = 3; i < 7 && ret == 0; i++) {
-    if (tmp.bits[i] != 0u) ret = 1;
+    if (tmp.bits[i] != 0u)
+      ret = 1;
   }
   return ret;
 }
@@ -187,7 +180,8 @@ unsigned div_10_decimal(unsigned *bits, int count_bits) {
 int is_zero_big_decimal(const big_decimal *b_decimal) {
   int ret = 1;
   for (int i = 0; i < 7 && ret; i++) {
-    if (b_decimal->bits[i] != 0u) ret = 0;
+    if (b_decimal->bits[i] != 0u)
+      ret = 0;
   }
   return ret;
 }
