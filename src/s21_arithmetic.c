@@ -2,7 +2,8 @@
 
 int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   int res_add = S21_OK;
-  if (is_zero(&value_1) && is_zero(&value_2))
+  if (is_zero(value_1.bits, UINT_COUNT_DECIMAL) &&
+      is_zero(value_2.bits, UINT_COUNT_DECIMAL))
     to_zero(result);
   else {
     int sign1 = get_sign(&value_1);
@@ -44,7 +45,8 @@ int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 
 int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   int res_mull = S21_OK;
-  if (is_zero(&value_1) || is_zero(&value_2))
+  if (is_zero(value_1.bits, UINT_COUNT_DECIMAL) ||
+      is_zero(value_2.bits, UINT_COUNT_DECIMAL))
     to_zero(result);
   else {
     int sign1 = get_sign(&value_1);
@@ -63,9 +65,9 @@ int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 
 int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   int res_div = S21_OK;
-  if (is_zero(&value_2))
+  if (is_zero(value_2.bits, UINT_COUNT_DECIMAL))
     res_div = S21_DIV_BY_ZERO;
-  else if (is_zero(&value_1))
+  else if (is_zero(value_1.bits, UINT_COUNT_DECIMAL))
     to_zero(result);
   else {
     int sign1 = get_sign(&value_1);

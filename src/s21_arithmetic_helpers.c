@@ -62,7 +62,8 @@ int base_int_div(const big_decimal *value_1, const big_decimal *value_2,
 
 int base_fract_div(const big_decimal *value_2, big_decimal *remainder,
                    big_decimal *quotient) {
-  while (is_zero_big_decimal(remainder) == 0 && quotient->bits[6] < 0xfffffff) {
+  while (is_zero(remainder->bits, UINT_COUNT_BIG_DECIMAL) == 0 &&
+         quotient->bits[6] < 0xfffffff) {
     // mull_10_big_decimal(remainder);
     mul_10_decimal(remainder->bits, UINT_COUNT_BIG_DECIMAL);
     remainder->scale++;
@@ -136,7 +137,7 @@ int big_to_decimal(big_decimal *b_decimal, s21_decimal *decimal) {
     if (remainder) tail = 1;
     remainder = div_10_decimal(b_decimal->bits, UINT_COUNT_BIG_DECIMAL - 1);
     b_decimal->scale--;
-    if (is_zero_big_decimal(b_decimal) &&
+    if (is_zero(b_decimal->bits, UINT_COUNT_BIG_DECIMAL) &&
         is_bankers_round_big_decimal_up(b_decimal, remainder, tail) == 0)
       code_error = S21_UNDERFLOW;
   }
@@ -180,13 +181,13 @@ unsigned div_10_decimal(unsigned *bits, int index_high_bits) {
   return (unsigned)remainder;
 }
 
-int is_zero_big_decimal(const big_decimal *b_decimal) {
-  int ret = 1;
-  for (int i = 0; i < UINT_COUNT_BIG_DECIMAL && ret; i++) {
-    if (b_decimal->bits[i] != 0u) ret = 0;
-  }
-  return ret;
-}
+// int is_zero_big_decimal(const big_decimal *b_decimal) {
+//   int ret = 1;
+//   for (int i = 0; i < UINT_COUNT_BIG_DECIMAL && ret; i++) {
+//     if (b_decimal->bits[i] != 0u) ret = 0;
+//   }
+//   return ret;
+// }
 
 int is_bankers_round_big_decimal_up(big_decimal *b_decimal, unsigned remainder,
                                     int tail) {

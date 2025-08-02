@@ -9,7 +9,8 @@ int s21_is_equal(s21_decimal value_1, s21_decimal value_2) {
   int scale_value_1 = get_scale(&value_1);
   int scale_value_2 = get_scale(&value_2);
   int result = 1;
-  if (is_zero(&value_1) && is_zero(&value_2)) {
+  if (is_zero(value_1.bits, UINT_COUNT_DECIMAL) &&
+      is_zero(value_2.bits, UINT_COUNT_DECIMAL)) {
     result = 1;
   } else if (sign_value_1 == sign_value_2) {
     result = 1;

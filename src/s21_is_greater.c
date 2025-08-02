@@ -8,7 +8,8 @@ int s21_is_greater(s21_decimal value_1, s21_decimal value_2) {
   int scale_value_2 = get_scale(&value_2);
   int result = 1;
   int equal = 0;
-  if (is_zero(&value_1) && is_zero(&value_2)) {
+  if (is_zero(value_1.bits, UINT_COUNT_DECIMAL) &&
+      is_zero(value_2.bits, UINT_COUNT_DECIMAL)) {
     result = 0;
   } else if (sign_value_1 && !sign_value_2) {
     result = 0;

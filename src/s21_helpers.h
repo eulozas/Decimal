@@ -21,11 +21,12 @@ double bank_round(double x);
 int count_digits_before_point(unsigned long long n);
 int find_point_index(double x);
 void normalize_mantissa(unsigned long long *mantissa, int *scale);
-void mul_decimal_by_10_and_carry_bits(s21_decimal *decimal);
+// void mul_decimal_by_10_and_carry_bits(s21_decimal *decimal);
 void write_mantissa_to_decimal(unsigned long long mantissa,
                                s21_decimal *decimal);
 // int divide_by_10(unsigned int *high, unsigned int *mid, unsigned int *low);
-int is_zero(const s21_decimal *decimal);
+// int is_zero(const s21_decimal *decimal);
+int is_zero(const unsigned *bits, int index_high_bits);
 void to_zero(s21_decimal *decimal);
 void init_big_decimal(big_decimal *decimal);
 int check_free_decimal_bit(s21_decimal decimal);

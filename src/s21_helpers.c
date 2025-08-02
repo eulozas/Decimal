@@ -67,9 +67,17 @@ void s21_normalization_big_scale(big_decimal *value_1, big_decimal *value_2) {
 //   b_decimal->scale++;
 // }
 
-int is_zero(const s21_decimal *decimal) {
-  return decimal->bits[0] == 0 && decimal->bits[1] == 0 &&
-         decimal->bits[2] == 0;
+// int is_zero(const s21_decimal *decimal) {
+//   return decimal->bits[0] == 0 && decimal->bits[1] == 0 &&
+//          decimal->bits[2] == 0;
+// }
+
+int is_zero(const unsigned *bits, int index_high_bits) {
+  int ret = 1;
+  for (int i = 0; i < index_high_bits && ret; i++) {
+    if (bits[i] != 0u) ret = 0;
+  }
+  return ret;
 }
 
 void to_zero(s21_decimal *decimal) {
