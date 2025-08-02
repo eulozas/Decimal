@@ -62,7 +62,9 @@ int base_int_div(const big_decimal *value_1, const big_decimal *value_2,
 int base_fract_div(const big_decimal *value_2, big_decimal *remainder,
                    big_decimal *quotient) {
   while (is_zero_big_decimal(remainder) == 0 && quotient->bits[6] < 0xfffffff) {
-    mull_10_big_decimal(remainder);
+    // mull_10_big_decimal(remainder);
+    mul_10_decimal(remainder->bits, 6);
+    remainder->scale++;
     big_decimal digit = {{0}, 0};
     unsigned bit = 0;
     while (s21_is_greater_or_equal_big_decimal(*remainder, *value_2)) {
@@ -70,7 +72,9 @@ int base_fract_div(const big_decimal *value_2, big_decimal *remainder,
       bit++;
     }
     digit.bits[0] = bit;
-    mull_10_big_decimal(quotient);
+    // mull_10_big_decimal(quotient);
+    mul_10_decimal(quotient->bits, 6);
+    quotient->scale++;
     base_add(quotient, &digit, quotient);
   }
   return 0;

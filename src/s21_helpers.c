@@ -47,21 +47,25 @@ void set_scale(s21_decimal *decimal, int scale) {
 
 void s21_normalization_big_scale(big_decimal *value_1, big_decimal *value_2) {
   while (value_1->scale > value_2->scale) {
-    mull_10_big_decimal(value_2);
+    mul_10_decimal(value_2->bits, 6);
+    value_2->scale++;
+    // mull_10_big_decimal(value_2);
   }
   while (value_2->scale > value_1->scale) {
-    mull_10_big_decimal(value_1);
+    mul_10_decimal(value_1->bits, 6);
+    value_1->scale++;
+    // mull_10_big_decimal(value_1);
   }
 }
 
-void mull_10_big_decimal(big_decimal *b_decimal) {
-  big_decimal tmp1 = *b_decimal;
-  big_decimal tmp2 = *b_decimal;
-  shift_left(&tmp1, 3);
-  shift_left(&tmp2, 1);
-  base_add(&tmp1, &tmp2, b_decimal);
-  b_decimal->scale++;
-}
+// void mull_10_big_decimal(big_decimal *b_decimal) {
+//   big_decimal tmp1 = *b_decimal;
+//   big_decimal tmp2 = *b_decimal;
+//   shift_left(&tmp1, 3);
+//   shift_left(&tmp2, 1);
+//   base_add(&tmp1, &tmp2, b_decimal);
+//   b_decimal->scale++;
+// }
 
 int is_zero(const s21_decimal *decimal) {
   return decimal->bits[0] == 0 && decimal->bits[1] == 0 &&
@@ -122,15 +126,25 @@ void normalize_mantissa(unsigned long long *mantissa, int *scale) {
   }
 }
 
-void mul_decimal_by_10_and_carry_bits(s21_decimal *decimal) {
-  unsigned long long a = (unsigned long long)decimal->bits[0] * 10;
-  unsigned long long b = (unsigned long long)decimal->bits[1] * 10 + (a >> 32);
-  unsigned long long c = (unsigned long long)decimal->bits[2] * 10 + (b >> 32);
-
-  decimal->bits[0] = (unsigned int)(a & 0xFFFFFFFF);
-  decimal->bits[1] = (unsigned int)(b & 0xFFFFFFFF);
-  decimal->bits[2] = (unsigned int)(c & 0xFFFFFFFF);
+void mul_10_decimal(unsigned *bits, int index_high_bits) {
+  int overflow = 0;
+  for (int i = 0; i <= index_high_bits; i++) {
+    unsigned long long buffer = (unsigned long long)bits[i] * 10 + overflow;
+    bits[i] = (unsigned long long)buffer & 0xFFFFFFFF;
+    overflow = buffer >> 32;
+  }
 }
+
+// void mul_decimal_by_10_and_carry_bits(s21_decimal *decimal) {
+//   unsigned long long a = (unsigned long long)decimal->bits[0] * 10;
+//   unsigned long long b = (unsigned long long)decimal->bits[1] * 10 + (a >>
+//   32); unsigned long long c = (unsigned long long)decimal->bits[2] * 10 + (b
+//   >> 32);
+
+//   decimal->bits[0] = (unsigned int)(a & 0xFFFFFFFF);
+//   decimal->bits[1] = (unsigned int)(b & 0xFFFFFFFF);
+//   decimal->bits[2] = (unsigned int)(c & 0xFFFFFFFF);
+// }
 
 void write_mantissa_to_decimal(unsigned long long mantissa,
                                s21_decimal *decimal) {
@@ -139,24 +153,24 @@ void write_mantissa_to_decimal(unsigned long long mantissa,
   decimal->bits[2] = 0;
 }
 
-int divide_by_10(unsigned int *high, unsigned int *mid, unsigned int *low) {
-  int has_fraction = 0;
-  unsigned long long rest = 0;
+// int divide_by_10(unsigned int *high, unsigned int *mid, unsigned int *low) {
+//   int has_fraction = 0;
+//   unsigned long long rest = 0;
 
-  unsigned long long value = ((unsigned long long)(*high));
-  *high = (unsigned int)(value / 10);
-  rest = value % 10;
+//   unsigned long long value = ((unsigned long long)(*high));
+//   *high = (unsigned int)(value / 10);
+//   rest = value % 10;
 
-  value = ((unsigned long long)(*mid)) + (rest << 32);
-  *mid = (unsigned int)(value / 10);
-  rest = value % 10;
+//   value = ((unsigned long long)(*mid)) + (rest << 32);
+//   *mid = (unsigned int)(value / 10);
+//   rest = value % 10;
 
-  value = ((unsigned long long)(*low)) + (rest << 32);
-  *low = (unsigned int)(value / 10);
-  if (value % 10 != 0) has_fraction = 1;  // дробное, остаток был
+//   value = ((unsigned long long)(*low)) + (rest << 32);
+//   *low = (unsigned int)(value / 10);
+//   if (value % 10 != 0) has_fraction = 1;  // дробное, остаток был
 
-  return has_fraction;
-}
+//   return has_fraction;
+// }
 
 int check_free_decimal_bit(s21_decimal decimal) {
   int res = 0;

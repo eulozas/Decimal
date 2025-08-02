@@ -26,7 +26,8 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {
       mantissa = (unsigned long long)(rounded_value);
       write_mantissa_to_decimal(mantissa, dst);
       while (scale) {
-        mul_decimal_by_10_and_carry_bits(dst);
+        mul_10_decimal(dst->bits, 2);
+        // mul_decimal_by_10_and_carry_bits(dst);
         scale--;
       }
     } else {

@@ -24,7 +24,7 @@ void normalize_mantissa(unsigned long long *mantissa, int *scale);
 void mul_decimal_by_10_and_carry_bits(s21_decimal *decimal);
 void write_mantissa_to_decimal(unsigned long long mantissa,
                                s21_decimal *decimal);
-int divide_by_10(unsigned int *high, unsigned int *mid, unsigned int *low);
+// int divide_by_10(unsigned int *high, unsigned int *mid, unsigned int *low);
 int is_zero(const s21_decimal *decimal);
 void to_zero(s21_decimal *decimal);
 void init_big_decimal(big_decimal *decimal);
@@ -34,5 +34,6 @@ int check_free_decimal_bit(s21_decimal decimal);
 // void increment_decimal_bits(s21_decimal *decimal);
 void mull_10_big_decimal(big_decimal *b_decimal);
 
+void mul_10_decimal(unsigned *bits, int index_high_bits);
 void s21_normalization_big_scale(big_decimal *value_1, big_decimal *value_2);
 #endif
