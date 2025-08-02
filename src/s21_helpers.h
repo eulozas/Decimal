@@ -36,5 +36,5 @@ int check_free_decimal_bit(const s21_decimal *decimal);
 
 void mul_10_decimal(unsigned *bits, int index_high_bits);
 void s21_normalization_big_scale(big_decimal *value_1, big_decimal *value_2);
-int is_valid_decimal(const s21_decimal *value);
+int is_not_valid_decimal(const s21_decimal *value);
 #endif

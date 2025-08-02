@@ -46,7 +46,7 @@
 int s21_truncate(s21_decimal value, s21_decimal *result) {
   if (!result) return 1;
 
-  int exit_code = is_valid_decimal(&value);
+  int exit_code = is_not_valid_decimal(&value);
 
   if (!exit_code) {
     int sign = get_sign(&value);

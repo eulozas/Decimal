@@ -39,7 +39,7 @@
 
 int s21_from_decimal_to_int(s21_decimal src, int *dst) {
   if (!dst) return 1;
-  int exit_code = is_valid_decimal(&src);
+  int exit_code = is_not_valid_decimal(&src);
   int sign = get_sign(&src);
   int scale = get_scale(&src);
   if (!exit_code) {

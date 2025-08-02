@@ -11,7 +11,8 @@ typedef enum {
   S21_OVERFLOW = 1,
   S21_UNDERFLOW = 2,
   S21_NEG_OVERFLOW = 2,
-  S21_DIV_BY_ZERO = 3
+  S21_DIV_BY_ZERO = 3,
+  VALID_ERROR = -1
 } s21_error_code;
 
 typedef enum {
@@ -23,8 +24,6 @@ typedef enum {
 } s21_size_decimal;
 
 typedef enum { BIT_ON = 1, BIT_OFF = 0, SIGN_OFF = 0 } s21_bit;
-
-#define MAX_IND_DECIMAL 127
 
 int base_add(const big_decimal *value_1, const big_decimal *value_2,
              big_decimal *result);

@@ -1,6 +1,10 @@
 #include "s21_arithmetic_helpers.h"
 
 int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
+  if (!result || is_not_valid_decimal(&value_1) ||
+      is_not_valid_decimal(&value_2)) {
+    return VALID_ERROR;
+  }
   int res_add = S21_OK;
   if (is_zero(value_1.bits, UINT_COUNT_DECIMAL) &&
       is_zero(value_2.bits, UINT_COUNT_DECIMAL))
@@ -37,6 +41,10 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 }
 
 int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
+  if (!result || is_not_valid_decimal(&value_1) ||
+      is_not_valid_decimal(&value_2)) {
+    return VALID_ERROR;
+  }
   int res_sub = S21_OK;
   value_2.bits[UINT_COUNT_DECIMAL] ^= MINUS;
   res_sub = s21_add(value_1, value_2, result);
@@ -44,6 +52,10 @@ int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 }
 
 int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
+  if (!result || is_not_valid_decimal(&value_1) ||
+      is_not_valid_decimal(&value_2)) {
+    return VALID_ERROR;
+  }
   int res_mull = S21_OK;
   if (is_zero(value_1.bits, UINT_COUNT_DECIMAL) ||
       is_zero(value_2.bits, UINT_COUNT_DECIMAL))
@@ -64,6 +76,10 @@ int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 }
 
 int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
+  if (!result || is_not_valid_decimal(&value_1) ||
+      is_not_valid_decimal(&value_2)) {
+    return VALID_ERROR;
+  }
   int res_div = S21_OK;
   if (is_zero(value_2.bits, UINT_COUNT_DECIMAL))
     res_div = S21_DIV_BY_ZERO;

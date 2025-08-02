@@ -208,7 +208,7 @@ int check_free_decimal_bit(const s21_decimal *decimal) {
 //   }
 // }
 
-int is_valid_decimal(const s21_decimal *value) {
+int is_not_valid_decimal(const s21_decimal *value) {
   int exit_code = 0;
   int scale = get_scale(value);
   int check_bit = check_free_decimal_bit(value);
