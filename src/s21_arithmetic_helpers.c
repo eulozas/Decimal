@@ -142,8 +142,6 @@ int big_to_decimal(big_decimal *b_decimal, s21_decimal *decimal) {
   }
   if (code_error == S21_OK) {
     bankers_round_big_decimal(b_decimal, remainder, tail);
-  }
-  if (code_error == S21_OK) {
     for (int i = 0; i < UINT_COUNT_DECIMAL; i++) {
       decimal->bits[i] = b_decimal->bits[i];
     }
