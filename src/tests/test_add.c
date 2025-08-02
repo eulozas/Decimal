@@ -116,6 +116,48 @@ START_TEST(test_add_8) {
 }
 END_TEST
 
+START_TEST(test_add_9) {
+  // 0.1000000000000000000000000125
+  s21_decimal value_1 = {{0xe800007d, 0x9fd0803c, 0x033b2e3c, 0x1c0000}};
+  // 0
+  s21_decimal value_2 = {{0x0, 0x0, 0x0, 0x0}};
+  s21_decimal result = {{0}};
+  // 0.1000000000000000000000000125
+  s21_decimal expected = {{0xe800007d, 0x9fd0803c, 0x033b2e3c, 0x1c0000}};
+  int s21_code_return = s21_add(value_1, value_2, &result);
+  ck_assert_int_eq(s21_code_return, S21_OK);
+  ck_assert_int_eq(s21_is_equal(result, expected), 1);
+}
+END_TEST
+
+START_TEST(test_add_10) {
+  // 0
+  s21_decimal value_1 = {{0x0, 0x0, 0x0, 0x0}};
+  // 0.1000000000000000000000000125
+  s21_decimal value_2 = {{0xe800007d, 0x9fd0803c, 0x033b2e3c, 0x1c0000}};
+  s21_decimal result = {{0}};
+  // 0.1000000000000000000000000125
+  s21_decimal expected = {{0xe800007d, 0x9fd0803c, 0x033b2e3c, 0x1c0000}};
+  int s21_code_return = s21_add(value_1, value_2, &result);
+  ck_assert_int_eq(s21_code_return, S21_OK);
+  ck_assert_int_eq(s21_is_equal(result, expected), 1);
+}
+END_TEST
+
+START_TEST(test_add_11) {
+  // 0
+  s21_decimal value_1 = {{0x0, 0x0, 0x0, 0x0}};
+  // 0
+  s21_decimal value_2 = {{0x0, 0x0, 0x0, 0x0}};
+  s21_decimal result = {{0}};
+  // 0
+  s21_decimal expected = {{0x0, 0x0, 0x0, 0x0}};
+  int s21_code_return = s21_add(value_1, value_2, &result);
+  ck_assert_int_eq(s21_code_return, S21_OK);
+  ck_assert_int_eq(s21_is_equal(result, expected), 1);
+}
+END_TEST
+
 START_TEST(test_add_uncorrect_1) {
   // 0.7922816251426433759354395033
   s21_decimal value_1 = {{0x99999999, 0x99999999, 0x19999999, 0x1c0000}};
@@ -161,6 +203,9 @@ Suite *add_suite(void) {
   tcase_add_test(tc, test_add_6);
   tcase_add_test(tc, test_add_7);
   tcase_add_test(tc, test_add_8);
+  tcase_add_test(tc, test_add_9);
+  tcase_add_test(tc, test_add_10);
+  tcase_add_test(tc, test_add_11);
   tcase_add_test(tc, test_add_uncorrect_1);
   tcase_add_test(tc, test_add_uncorrect_2);
   tcase_add_test(tc, test_add_uncorrect_3);
