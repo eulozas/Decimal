@@ -39,14 +39,9 @@
 
 int s21_from_decimal_to_int(s21_decimal src, int *dst) {
   if (!dst) return 1;
-  int exit_code = 0;
+  int exit_code = is_valid_decimal(&src);
   int sign = get_sign(&src);
   int scale = get_scale(&src);
-  int check_bit = check_free_decimal_bit(src);
-
-  if (scale < 0 || scale > MAX_SCALE || check_bit) {
-    exit_code = 1;
-  }
   if (!exit_code) {
     while (scale > 0) {
       div_10_decimal(src.bits, 2);

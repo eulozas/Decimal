@@ -181,17 +181,17 @@ void write_mantissa_to_decimal(unsigned long long mantissa,
 //   return has_fraction;
 // }
 
-int check_free_decimal_bit(s21_decimal decimal) {
+int check_free_decimal_bit(const s21_decimal *decimal) {
   int res = 0;
   int start_low_zero = 96, end_low_zero = 112;
   int start_high_zero = 120, end_high_zero = 127;
   for (int i = start_low_zero; i < end_low_zero && !res; i++) {
-    if (get_bit(decimal.bits, i)) {
+    if (get_bit(decimal->bits, i)) {
       res = 1;
     }
   }
   for (int i = start_high_zero; i < end_high_zero && !res; i++) {
-    if (get_bit(decimal.bits, i)) {
+    if (get_bit(decimal->bits, i)) {
       res = 1;
     }
   }
@@ -208,9 +208,13 @@ int check_free_decimal_bit(s21_decimal decimal) {
 //   }
 // }
 
-// void increment_decimal_bits(s21_decimal *decimal) {
-//   int flag_end = 1;
-//   for (int i = 0; i < 3 && flag_end; i++) {
-//     if ((++decimal->bits[i]) != 0) flag_end = 0;
-//   }
-// }
+int is_valid_decimal(const s21_decimal *value) {
+  int exit_code = 0;
+  int scale = get_scale(value);
+  int check_bit = check_free_decimal_bit(value);
+
+  if (scale < 0 || scale > MAX_SCALE || check_bit) {
+    exit_code = 1;
+  }
+  return exit_code;
+}

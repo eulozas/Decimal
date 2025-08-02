@@ -29,11 +29,12 @@ void write_mantissa_to_decimal(unsigned long long mantissa,
 int is_zero(const unsigned *bits, int index_high_bits);
 void to_zero(s21_decimal *decimal);
 void init_big_decimal(big_decimal *decimal);
-int check_free_decimal_bit(s21_decimal decimal);
+int check_free_decimal_bit(const s21_decimal *decimal);
 // void increment_decimal_bits(unsigned int *low, unsigned int *mid,
 //                             unsigned int *high);
 // void increment_decimal_bits(s21_decimal *decimal);
 
 void mul_10_decimal(unsigned *bits, int index_high_bits);
 void s21_normalization_big_scale(big_decimal *value_1, big_decimal *value_2);
+int is_valid_decimal(const s21_decimal *value);
 #endif
