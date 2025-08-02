@@ -30,7 +30,8 @@ void set_bit(unsigned *bits, int index, int val) {
 }
 
 void set_sign(s21_decimal *decimal, int val) {
-  set_bit(decimal->bits, 127, val);
+  int ind_sign = 127;
+  set_bit(decimal->bits, ind_sign, val);
 }
 
 int get_sign(const s21_decimal *decimal) {
@@ -182,12 +183,14 @@ void write_mantissa_to_decimal(unsigned long long mantissa,
 
 int check_free_decimal_bit(s21_decimal decimal) {
   int res = 0;
-  for (int i = 96; i < 112 && !res; i++) {
+  int start_low_zero = 96, end_low_zero = 112;
+  int start_high_zero = 120, end_high_zero = 127;
+  for (int i = start_low_zero; i < end_low_zero && !res; i++) {
     if (get_bit(decimal.bits, i)) {
       res = 1;
     }
   }
-  for (int i = 120; i < 127 && !res; i++) {
+  for (int i = start_high_zero; i < end_high_zero && !res; i++) {
     if (get_bit(decimal.bits, i)) {
       res = 1;
     }
