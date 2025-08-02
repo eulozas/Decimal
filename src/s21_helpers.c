@@ -174,11 +174,18 @@ int check_free_decimal_bit(s21_decimal decimal) {
   return res;
 }
 
-void increment_decimal_bits(unsigned int *low, unsigned int *mid,
-                            unsigned int *high) {
-  if (++(*low) == 0) {    // произошло переполнение low
-    if (++(*mid) == 0) {  // переполнение mid
-      ++(*high);          // прибавляем к high
-    }
-  }
-}
+// void increment_decimal_bits(unsigned int *low, unsigned int *mid,
+//                             unsigned int *high) {
+//   if (++(*low) == 0) {    // произошло переполнение low
+//     if (++(*mid) == 0) {  // переполнение mid
+//       ++(*high);          // прибавляем к high
+//     }
+//   }
+// }
+
+// void increment_decimal_bits(s21_decimal *decimal) {
+//   int flag_end = 1;
+//   for (int i = 0; i < 3 && flag_end; i++) {
+//     if ((++decimal->bits[i]) != 0) flag_end = 0;
+//   }
+// }

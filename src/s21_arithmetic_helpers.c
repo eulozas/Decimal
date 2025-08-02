@@ -92,8 +92,7 @@ int shift_left(big_decimal *decimal, int index) {
     }
   }
   for (int i = 0; i < index_shift && !overflow; i++) {
-    if (get_bit(decimal->bits, MAX_IND_BIG_DECIMAL - i))
-      overflow = 1;
+    if (get_bit(decimal->bits, MAX_IND_BIG_DECIMAL - i)) overflow = 1;
   }
   for (int i = 6; i >= 0 && !overflow && index_shift != 0; i--) {
     decimal->bits[i] <<= index_shift;
@@ -117,8 +116,7 @@ int big_to_decimal(big_decimal *b_decimal, s21_decimal *decimal) {
   int tail = 0;
   while (mantissa_96_bit(b_decimal, remainder, tail) && code_error == 0) {
     if (b_decimal->scale > 0) {
-      if (remainder)
-        tail = 1;
+      if (remainder) tail = 1;
       remainder = div_10_decimal(b_decimal->bits, 6);
       b_decimal->scale--;
     } else if (get_sign(decimal)) {
@@ -127,8 +125,7 @@ int big_to_decimal(big_decimal *b_decimal, s21_decimal *decimal) {
       code_error = S21_OVERFLOW;
   }
   while (b_decimal->scale > 28 && code_error == S21_OK) {
-    if (remainder)
-      tail = 1;
+    if (remainder) tail = 1;
     remainder = div_10_decimal(b_decimal->bits, 6);
     b_decimal->scale--;
     if (is_zero_big_decimal(b_decimal) &&
@@ -160,15 +157,14 @@ int mantissa_96_bit(const big_decimal *b_decimal, unsigned remainder,
   bankers_round_big_decimal(&tmp, remainder, tail);
   int ret = 0;
   for (int i = 3; i < 7 && ret == 0; i++) {
-    if (tmp.bits[i] != 0u)
-      ret = 1;
+    if (tmp.bits[i] != 0u) ret = 1;
   }
   return ret;
 }
 
-unsigned div_10_decimal(unsigned *bits, int count_bits) {
+unsigned div_10_decimal(unsigned *bits, int index_high_bits) {
   unsigned long long remainder = 0;
-  for (int i = count_bits; i >= 0; i--) {
+  for (int i = index_high_bits; i >= 0; i--) {
     unsigned long long current =
         (unsigned long long)bits[i] + (remainder << 32);
     bits[i] = (unsigned)(current / 10);
@@ -180,8 +176,7 @@ unsigned div_10_decimal(unsigned *bits, int count_bits) {
 int is_zero_big_decimal(const big_decimal *b_decimal) {
   int ret = 1;
   for (int i = 0; i < 7 && ret; i++) {
-    if (b_decimal->bits[i] != 0u)
-      ret = 0;
+    if (b_decimal->bits[i] != 0u) ret = 0;
   }
   return ret;
 }
