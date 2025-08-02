@@ -118,7 +118,8 @@ int big_to_decimal(big_decimal *b_decimal, s21_decimal *decimal) {
   while (mantissa_96_bit(b_decimal, remainder, tail) && code_error == 0) {
     if (b_decimal->scale > 0) {
       if (remainder) tail = 1;
-      remainder = div_10_big_decimal(b_decimal);
+      remainder = div_10_big_decimal(b_decimal->bits, 6);
+      b_decimal->scale--;
       if (b_decimal->scale == 0) {
         round_done = 1;
         bankers_round_big_decimal(b_decimal, remainder, tail);
@@ -132,7 +133,8 @@ int big_to_decimal(big_decimal *b_decimal, s21_decimal *decimal) {
   }
   while (b_decimal->scale > 28 && code_error == S21_OK) {
     if (remainder) tail = 1;
-    remainder = div_10_big_decimal(b_decimal);
+    remainder = div_10_big_decimal(b_decimal->bits, 6);
+    b_decimal->scale--;
     if (is_zero_big_decimal(b_decimal) &&
         is_bankers_round_big_decimal_up(b_decimal, remainder, tail) == 0)
       code_error = S21_UNDERFLOW;
@@ -171,15 +173,14 @@ int mantissa_96_bit(const big_decimal *b_decimal, unsigned remainder,
   return ret;
 }
 
-unsigned div_10_big_decimal(big_decimal *b_decimal) {
+unsigned div_10_big_decimal(unsigned *bits, int count_bits) {
   unsigned long long remainder = 0;
-  for (int i = 6; i >= 0; i--) {
+  for (int i = count_bits; i >= 0; i--) {
     unsigned long long current =
-        (unsigned long long)b_decimal->bits[i] + (remainder << 32);
-    b_decimal->bits[i] = (unsigned)(current / 10);
+        (unsigned long long)bits[i] + (remainder << 32);
+    bits[i] = (unsigned)(current / 10);
     remainder = current % 10;
   }
-  b_decimal->scale--;
   return (unsigned)remainder;
 }
 
