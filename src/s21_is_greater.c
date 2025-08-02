@@ -27,7 +27,7 @@ int s21_is_greater(s21_decimal value_1, s21_decimal value_2) {
         result = 1;
       }
     }
-    if (equal == 7) {
+    if (equal == UINT_COUNT_BIG_DECIMAL) {
       result = 0;
     }
   } else {

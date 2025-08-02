@@ -11,8 +11,8 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
                 big_result = {{0}, 0};
     to_big_decimal(&value_1, &big_value_1);
     to_big_decimal(&value_2, &big_value_2);
-    set_sign(&value_1, 0);
-    set_sign(&value_2, 0);
+    set_sign(&value_1, SIGN_OFF);
+    set_sign(&value_2, SIGN_OFF);
     s21_normalization_big_scale(&big_value_1, &big_value_2);
     if (sign1 == sign2) {
       set_sign(result, sign1);
@@ -37,7 +37,7 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 
 int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   int res_sub = S21_OK;
-  value_2.bits[3] ^= MINUS;
+  value_2.bits[UINT_COUNT_DECIMAL] ^= MINUS;
   res_sub = s21_add(value_1, value_2, result);
   return res_sub;
 }

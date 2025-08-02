@@ -16,7 +16,8 @@ int s21_negate(s21_decimal value, s21_decimal *result) {
 
   if (!exit_code) {
     *result = value;
-    set_sign(result, !sign);
+    sign ^= 1u;
+    set_sign(result, sign);
   }
 
   return exit_code;

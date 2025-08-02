@@ -11,15 +11,15 @@ void clear_decimal(s21_decimal *decimal) {
 }
 
 int get_bit(const unsigned *decimal, int index) {
-  int bit_index = index % 32;
-  int bit_number = index / 32;
+  int bit_index = index % BITS_IN_UINT;
+  int bit_number = index / BITS_IN_UINT;
 
   return (decimal[bit_number] >> bit_index) & 1u;
 }
 
 void set_bit(unsigned *bits, int index, int val) {
-  int bit_index = index % 32;
-  int bit_number = index / 32;
+  int bit_index = index % BITS_IN_UINT;
+  int bit_number = index / BITS_IN_UINT;
   unsigned mask = 1u << bit_index;
 
   if (val) {
@@ -34,25 +34,25 @@ void set_sign(s21_decimal *decimal, int val) {
 }
 
 int get_sign(const s21_decimal *decimal) {
-  return (decimal->bits[3] >> 31) & 1u;
+  return (decimal->bits[UINT_COUNT_DECIMAL] >> (BITS_IN_UINT - 1)) & 1u;
 }
 
 int get_scale(const s21_decimal *decimal) {
-  return (decimal->bits[3] >> 16) & 0xFF;
+  return (decimal->bits[UINT_COUNT_DECIMAL] >> 16) & 0xFF;
 }
 
 void set_scale(s21_decimal *decimal, int scale) {
-  decimal->bits[3] |= (scale << 16);
+  decimal->bits[UINT_COUNT_DECIMAL] |= (scale << 16);
 }
 
 void s21_normalization_big_scale(big_decimal *value_1, big_decimal *value_2) {
   while (value_1->scale > value_2->scale) {
-    mul_10_decimal(value_2->bits, 6);
+    mul_10_decimal(value_2->bits, UINT_COUNT_BIG_DECIMAL);
     value_2->scale++;
     // mull_10_big_decimal(value_2);
   }
   while (value_2->scale > value_1->scale) {
-    mul_10_decimal(value_1->bits, 6);
+    mul_10_decimal(value_1->bits, UINT_COUNT_BIG_DECIMAL);
     value_1->scale++;
     // mull_10_big_decimal(value_1);
   }
@@ -73,7 +73,7 @@ int is_zero(const s21_decimal *decimal) {
 }
 
 void to_zero(s21_decimal *decimal) {
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i <= UINT_COUNT_DECIMAL; i++) {
     decimal->bits[i] = 0;
   }
 }
@@ -128,7 +128,7 @@ void normalize_mantissa(unsigned long long *mantissa, int *scale) {
 
 void mul_10_decimal(unsigned *bits, int index_high_bits) {
   int overflow = 0;
-  for (int i = 0; i <= index_high_bits; i++) {
+  for (int i = 0; i < index_high_bits; i++) {
     unsigned long long buffer = (unsigned long long)bits[i] * 10 + overflow;
     bits[i] = (unsigned long long)buffer & 0xFFFFFFFF;
     overflow = buffer >> 32;
@@ -149,7 +149,7 @@ void mul_10_decimal(unsigned *bits, int index_high_bits) {
 void write_mantissa_to_decimal(unsigned long long mantissa,
                                s21_decimal *decimal) {
   decimal->bits[0] = (unsigned int)(mantissa & 0xFFFFFFFF);
-  decimal->bits[1] = (unsigned int)((mantissa >> 32) & 0xFFFFFFFF);
+  decimal->bits[1] = (unsigned int)((mantissa >> BITS_IN_UINT) & 0xFFFFFFFF);
   decimal->bits[2] = 0;
 }
 

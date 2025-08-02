@@ -19,7 +19,7 @@ int s21_is_equal(s21_decimal value_1, s21_decimal value_2) {
     if (scale_value_1 != scale_value_2) {
       s21_normalization_big_scale(&big_value_1, &big_value_2);
     }
-    for (int i = 6; i >= 0 && result; i--) {
+    for (int i = UINT_COUNT_BIG_DECIMAL - 1; i >= 0 && result; i--) {
       if (big_value_1.bits[i] != big_value_2.bits[i]) {
         result = 0;
       }
