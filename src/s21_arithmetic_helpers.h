@@ -36,7 +36,7 @@ int big_to_decimal(big_decimal *b_decimal, s21_decimal *decimal);
 int shift_left(big_decimal *decimal, int index);
 int mantissa_96_bit(const big_decimal *b_decimal, unsigned remainder, int tail);
 int is_zero_big_decimal(const big_decimal *b_decimal);
-unsigned div_10_big_decimal(unsigned *bits, int count_bits);
+unsigned div_10_decimal(unsigned *bits, int count_bits);
 int is_bankers_round_big_decimal_up(big_decimal *b_decimal, unsigned remainder,
                                     int tail);
 void bankers_round_big_decimal(big_decimal *b_decimal, unsigned remainder,
