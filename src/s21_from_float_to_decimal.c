@@ -2,12 +2,12 @@
 
 int s21_from_float_to_decimal(float src, s21_decimal *dst) {
   if (!dst) return 1;
-  clear_decimal(dst);
+  s21_clear_decimal(dst);
   int exit_code = 0;
   if (isnan(src) || isinf(src) || fabs((double)src) >= MAX_DECIMAL_VALUE_NEXT)
     exit_code = 1;
   if (!exit_code && src != 0.0f && fabsf(src) < 1e-28f) {
-    if (signbit(src)) set_sign(dst, 1);
+    if (signbit(src)) s21_set_sign(dst, 1);
     exit_code = 1;
   }
 
@@ -19,30 +19,30 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {
     if (src == 0.0f) {
       exit_code = 0;
     } else if (value > 1e6) {
-      int point = find_point_index(value);
+      int point = s21_find_point_index(value);
       scale = point - (SIGNIF_DIGITS - 1);
-      double rounded_value = bank_round(value / pow(10.0, scale));
+      double rounded_value = s21_bank_round(value / pow(10.0, scale));
       mantissa = (unsigned long long)(rounded_value);
-      write_mantissa_to_decimal(mantissa, dst);
+      s21_write_mantissa_to_decimal(mantissa, dst);
       while (scale) {
-        mul_10_decimal(dst->bits, UINT_COUNT_DECIMAL);
+        s21_mul_10_decimal(dst->bits, UINT_COUNT_DECIMAL);
         // mul_decimal_by_10_and_carry_bits(dst);
         scale--;
       }
     } else {
       while (scale < MAX_SCALE && digits < SIGNIF_DIGITS - 1) {
         mantissa = (unsigned long long)value;
-        digits = count_digits_before_point(mantissa);
+        digits = s21_count_digits_before_point(mantissa);
         value *= 10.0;
         scale++;
       }
-      value = bank_round(value);
+      value = s21_bank_round(value);
       mantissa = (unsigned long long)value;
-      normalize_mantissa(&mantissa, &scale);
-      write_mantissa_to_decimal(mantissa, dst);
+      s21_normalize_mantissa(&mantissa, &scale);
+      s21_write_mantissa_to_decimal(mantissa, dst);
     }
-    if (scale > 0) set_scale(dst, scale);
-    if (signbit(src)) set_sign(dst, 1);
+    if (scale > 0) s21_set_scale(dst, scale);
+    if (signbit(src)) s21_set_sign(dst, 1);
   }
   return exit_code;
 }

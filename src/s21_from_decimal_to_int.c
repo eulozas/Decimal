@@ -3,9 +3,9 @@
 // int s21_from_decimal_to_int(s21_decimal src, int *dst) {
 //   if (!dst) return 1;
 //   int exit_code = 0;
-//   int sign = get_sign(&src);
-//   int scale = get_scale(&src);
-//   int check_bit = check_free_decimal_bit(src);
+//   int sign = s21_get_sign(&src);
+//   int scale = s21_get_scale(&src);
+//   int check_bit = s21_check_free_decimal_bit(src);
 
 //   if (scale < 0 || scale > MAX_SCALE || check_bit) {
 //     exit_code = 1;
@@ -38,12 +38,12 @@
 
 int s21_from_decimal_to_int(s21_decimal src, int *dst) {
   if (!dst) return 1;
-  int exit_code = is_not_valid_decimal(&src);
-  int sign = get_sign(&src);
-  int scale = get_scale(&src);
+  int exit_code = s21_is_not_valid_decimal(&src);
+  int sign = s21_get_sign(&src);
+  int scale = s21_get_scale(&src);
   if (!exit_code) {
     while (scale > 0) {
-      div_10_decimal(src.bits, 2);
+      s21_div_10_decimal(src.bits, 2);
       scale--;
     }
 

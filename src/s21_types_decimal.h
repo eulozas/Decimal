@@ -4,7 +4,7 @@
 typedef struct {
   unsigned bits[7];
   unsigned scale;
-} big_decimal;
+} s21_big_decimal;
 
 #define MINUS 0x80000000
 

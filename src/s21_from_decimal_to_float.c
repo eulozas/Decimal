@@ -2,9 +2,9 @@
 
 int s21_from_decimal_to_float(s21_decimal src, float *dst) {
   if (!dst) return 1;
-  int exit_code = is_not_valid_decimal(&src);
-  int sign = get_sign(&src);
-  int scale = get_scale(&src);
+  int exit_code = s21_is_not_valid_decimal(&src);
+  int sign = s21_get_sign(&src);
+  int scale = s21_get_scale(&src);
   if (!exit_code) {
     unsigned int low = src.bits[0];
     unsigned int mid = src.bits[1];

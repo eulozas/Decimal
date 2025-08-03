@@ -5,27 +5,29 @@
 #include "s21_helpers.h"
 #include "s21_types_decimal.h"
 
-int base_add(const big_decimal *value_1, const big_decimal *value_2,
-             big_decimal *result);
-int base_sub(const big_decimal *value_1, const big_decimal *value_2,
-             big_decimal *result);
-int base_mull(const big_decimal *value_1, const big_decimal *value_2,
-              big_decimal *result);
+int s21_base_add(const s21_big_decimal *value_1, const s21_big_decimal *value_2,
+                 s21_big_decimal *result);
+int s21_base_sub(const s21_big_decimal *value_1, const s21_big_decimal *value_2,
+                 s21_big_decimal *result);
+int s21_base_mull(const s21_big_decimal *value_1,
+                  const s21_big_decimal *value_2, s21_big_decimal *result);
 
-int base_int_div(const big_decimal *value_1, const big_decimal *value_2,
-                 big_decimal *remainder, big_decimal *quotient);
-int base_fract_div(const big_decimal *value_2, big_decimal *remainder,
-                   big_decimal *quotient);
+int s21_base_int_div(const s21_big_decimal *value_1,
+                     const s21_big_decimal *value_2, s21_big_decimal *remainder,
+                     s21_big_decimal *quotient);
+int s21_base_fract_div(const s21_big_decimal *value_2,
+                       s21_big_decimal *remainder, s21_big_decimal *quotient);
 
-void init_big_decimal(big_decimal *decimal);
-int big_to_decimal(big_decimal *b_decimal, s21_decimal *decimal);
+void s21_init_big_decimal(s21_big_decimal *decimal);
+int s21_big_to_decimal(s21_big_decimal *b_decimal, s21_decimal *decimal);
 
-int shift_left(big_decimal *decimal, int index);
-int mantissa_96_bit(const big_decimal *b_decimal, unsigned remainder, int tail);
+int s21_shift_left(s21_big_decimal *decimal, int index);
+int s21_mantissa_96_bit(const s21_big_decimal *b_decimal, unsigned remainder,
+                        int tail);
 
-int is_bankers_round_big_decimal_up(big_decimal *b_decimal, unsigned remainder,
-                                    int tail);
-void bankers_round_big_decimal(big_decimal *b_decimal, unsigned remainder,
-                               int tail);
+int s21_is_bankers_round_big_decimal_up(s21_big_decimal *b_decimal,
+                                        unsigned remainder, int tail);
+void s21_bankers_round_big_decimal(s21_big_decimal *b_decimal,
+                                   unsigned remainder, int tail);
 
 #endif

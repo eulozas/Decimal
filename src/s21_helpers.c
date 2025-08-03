@@ -1,22 +1,19 @@
 #include "s21_helpers.h"
 
-#include <stdint.h>
-#include <stdio.h>
-
-void clear_decimal(s21_decimal *decimal) {
-  for (int i = 0; i < 4; ++i) {
+void s21_clear_decimal(s21_decimal *decimal) {
+  for (int i = 0; i <= UINT_COUNT_DECIMAL; ++i) {
     decimal->bits[i] = 0;
   }
 }
 
-int get_bit(const unsigned *decimal, int index) {
+int s21_get_bit(const unsigned *decimal, int index) {
   int bit_index = index % BITS_IN_UINT;
   int bit_number = index / BITS_IN_UINT;
 
   return (decimal[bit_number] >> bit_index) & 1u;
 }
 
-void set_bit(unsigned *bits, int index, int val) {
+void s21_set_bit(unsigned *bits, int index, int val) {
   int bit_index = index % BITS_IN_UINT;
   int bit_number = index / BITS_IN_UINT;
   unsigned mask = 1u << bit_index;
@@ -28,51 +25,38 @@ void set_bit(unsigned *bits, int index, int val) {
   }
 }
 
-void set_sign(s21_decimal *decimal, int val) {
+void s21_set_sign(s21_decimal *decimal, int val) {
   int ind_sign = 127;
-  set_bit(decimal->bits, ind_sign, val);
+  s21_set_bit(decimal->bits, ind_sign, val);
 }
 
-int get_sign(const s21_decimal *decimal) {
+int s21_get_sign(const s21_decimal *decimal) {
   return (decimal->bits[UINT_COUNT_DECIMAL] >> (BITS_IN_UINT - 1)) & 1u;
 }
 
-int get_scale(const s21_decimal *decimal) {
+int s21_get_scale(const s21_decimal *decimal) {
   return (decimal->bits[UINT_COUNT_DECIMAL] >> 16) & 0xFF;
 }
 
-void set_scale(s21_decimal *decimal, int scale) {
+void s21_set_scale(s21_decimal *decimal, int scale) {
   decimal->bits[UINT_COUNT_DECIMAL] |= (scale << 16);
 }
 
-void s21_normalization_big_scale(big_decimal *value_1, big_decimal *value_2) {
+void s21_normalization_big_scale(s21_big_decimal *value_1,
+                                 s21_big_decimal *value_2) {
   while (value_1->scale > value_2->scale) {
-    mul_10_decimal(value_2->bits, UINT_COUNT_BIG_DECIMAL);
+    s21_mul_10_decimal(value_2->bits, UINT_COUNT_BIG_DECIMAL);
     value_2->scale++;
     // mull_10_big_decimal(value_2);
   }
   while (value_2->scale > value_1->scale) {
-    mul_10_decimal(value_1->bits, UINT_COUNT_BIG_DECIMAL);
+    s21_mul_10_decimal(value_1->bits, UINT_COUNT_BIG_DECIMAL);
     value_1->scale++;
     // mull_10_big_decimal(value_1);
   }
 }
 
-// void mull_10_big_decimal(big_decimal *b_decimal) {
-//   big_decimal tmp1 = *b_decimal;
-//   big_decimal tmp2 = *b_decimal;
-//   shift_left(&tmp1, 3);
-//   shift_left(&tmp2, 1);
-//   base_add(&tmp1, &tmp2, b_decimal);
-//   b_decimal->scale++;
-// }
-
-// int is_zero(const s21_decimal *decimal) {
-//   return decimal->bits[0] == 0 && decimal->bits[1] == 0 &&
-//          decimal->bits[2] == 0;
-// }
-
-int is_zero(const unsigned *bits, int index_high_bits) {
+int s21_is_zero(const unsigned *bits, int index_high_bits) {
   int ret = 1;
   for (int i = 0; i < index_high_bits && ret; i++) {
     if (bits[i] != 0u) ret = 0;
@@ -80,13 +64,7 @@ int is_zero(const unsigned *bits, int index_high_bits) {
   return ret;
 }
 
-void to_zero(s21_decimal *decimal) {
-  for (int i = 0; i <= UINT_COUNT_DECIMAL; i++) {
-    decimal->bits[i] = 0;
-  }
-}
-
-int count_digits_before_point(unsigned long long n) {
+int s21_count_digits_before_point(unsigned long long n) {
   int count = 0;
   do {
     count++;
@@ -95,7 +73,7 @@ int count_digits_before_point(unsigned long long n) {
   return count;
 }
 
-double bank_round(double x) {
+double s21_bank_round(double x) {
   // до нижнего
   double floor_x = floor(x);
   double diff = x - floor_x;
@@ -116,7 +94,7 @@ double bank_round(double x) {
   }
 }
 
-int find_point_index(double x) {
+int s21_find_point_index(double x) {
   x = fabs(x);
   int index = 0;
 
@@ -127,14 +105,14 @@ int find_point_index(double x) {
   return index;
 }
 
-void normalize_mantissa(unsigned long long *mantissa, int *scale) {
+void s21_normalize_mantissa(unsigned long long *mantissa, int *scale) {
   while (*scale > 0 && (*mantissa % 10 == 0)) {
     *mantissa /= 10;
     (*scale)--;
   }
 }
 
-void mul_10_decimal(unsigned *bits, int index_high_bits) {
+void s21_mul_10_decimal(unsigned *bits, int index_high_bits) {
   int overflow = 0;
   for (int i = 0; i < index_high_bits; i++) {
     unsigned long long buffer = (unsigned long long)bits[i] * 10 + overflow;
@@ -154,8 +132,8 @@ void mul_10_decimal(unsigned *bits, int index_high_bits) {
 //   decimal->bits[2] = (unsigned int)(c & 0xFFFFFFFF);
 // }
 
-void write_mantissa_to_decimal(unsigned long long mantissa,
-                               s21_decimal *decimal) {
+void s21_write_mantissa_to_decimal(unsigned long long mantissa,
+                                   s21_decimal *decimal) {
   decimal->bits[0] = (unsigned int)(mantissa & 0xFFFFFFFF);
   decimal->bits[1] = (unsigned int)((mantissa >> BITS_IN_UINT) & 0xFFFFFFFF);
   decimal->bits[2] = 0;
@@ -180,17 +158,17 @@ void write_mantissa_to_decimal(unsigned long long mantissa,
 //   return has_fraction;
 // }
 
-int check_free_decimal_bit(const s21_decimal *decimal) {
+int s21_check_free_decimal_bit(const s21_decimal *decimal) {
   int res = 0;
   int start_low_zero = 96, end_low_zero = 112;
   int start_high_zero = 120, end_high_zero = 127;
   for (int i = start_low_zero; i < end_low_zero && !res; i++) {
-    if (get_bit(decimal->bits, i)) {
+    if (s21_get_bit(decimal->bits, i)) {
       res = 1;
     }
   }
   for (int i = start_high_zero; i < end_high_zero && !res; i++) {
-    if (get_bit(decimal->bits, i)) {
+    if (s21_get_bit(decimal->bits, i)) {
       res = 1;
     }
   }
@@ -207,10 +185,10 @@ int check_free_decimal_bit(const s21_decimal *decimal) {
 //   }
 // }
 
-int is_not_valid_decimal(const s21_decimal *value) {
+int s21_is_not_valid_decimal(const s21_decimal *value) {
   int exit_code = 0;
-  int scale = get_scale(value);
-  int check_bit = check_free_decimal_bit(value);
+  int scale = s21_get_scale(value);
+  int check_bit = s21_check_free_decimal_bit(value);
 
   if (scale < 0 || scale > MAX_SCALE || check_bit) {
     exit_code = 1;
@@ -218,14 +196,15 @@ int is_not_valid_decimal(const s21_decimal *value) {
   return exit_code;
 }
 
-void to_big_decimal(const s21_decimal *decimal, big_decimal *b_decimal) {
+void s21_to_big_decimal(const s21_decimal *decimal,
+                        s21_big_decimal *b_decimal) {
   for (int i = 0; i < UINT_COUNT_DECIMAL; i++) {
     b_decimal->bits[i] = decimal->bits[i];
   }
-  b_decimal->scale = get_scale(decimal);
+  b_decimal->scale = s21_get_scale(decimal);
 }
 
-unsigned div_10_decimal(unsigned *bits, int index_high_bits) {
+unsigned s21_div_10_decimal(unsigned *bits, int index_high_bits) {
   unsigned long long remainder = 0;
   for (int i = index_high_bits; i >= 0; i--) {
     unsigned long long current =
@@ -236,8 +215,8 @@ unsigned div_10_decimal(unsigned *bits, int index_high_bits) {
   return (unsigned)remainder;
 }
 
-int s21_is_greater_or_equal_big_decimal(big_decimal value_1,
-                                        big_decimal value_2) {
+int s21_is_greater_or_equal_big_decimal(s21_big_decimal value_1,
+                                        s21_big_decimal value_2) {
   int result = 1;
   int equal = 0;
   s21_is_equal_mantissa(value_1, value_2, &result, &equal);
@@ -247,7 +226,7 @@ int s21_is_greater_or_equal_big_decimal(big_decimal value_1,
   return result;
 }
 
-void s21_is_equal_mantissa(big_decimal value_1, big_decimal value_2,
+void s21_is_equal_mantissa(s21_big_decimal value_1, s21_big_decimal value_2,
                            int *result, int *equal) {
   int flag_end = 1;
   for (int i = UINT_COUNT_BIG_DECIMAL - 1; i >= 0 && flag_end; i--) {

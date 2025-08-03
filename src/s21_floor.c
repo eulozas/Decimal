@@ -6,9 +6,9 @@
 
 //   int exit_code = 0;
 
-//   int sign = get_sign(&value);
-//   int scale = get_scale(&value);
-//   int check_bit = check_free_decimal_bit(value);
+//   int sign = s21_get_sign(&value);
+//   int scale = s21_get_scale(&value);
+//   int check_bit = s21_check_free_decimal_bit(value);
 
 //   if (scale < 0 || scale > MAX_SCALE || check_bit) {
 //     exit_code = 1;
@@ -34,7 +34,7 @@
 //         if (has_fraction) {
 //           increment_decimal_bits(&low, &mid, &high);
 //         }
-//         set_sign(result, sign);
+//         s21_set_sign(result, sign);
 //       }
 
 //       result->bits[0] = low;
@@ -51,17 +51,17 @@
 int s21_floor(s21_decimal value, s21_decimal *result) {
   if (!result) return 1;
 
-  int exit_code = is_not_valid_decimal(&value);
+  int exit_code = s21_is_not_valid_decimal(&value);
 
   if (!exit_code) {
-    int sign = get_sign(&value);
-    int scale = get_scale(&value);
+    int sign = s21_get_sign(&value);
+    int scale = s21_get_scale(&value);
     *result = value;
     result->bits[3] = 0u;
     if (scale > 0) {
       int has_fraction = 0;
       while (scale > 0) {
-        if (div_10_decimal(result->bits, 2) > 0) {
+        if (s21_div_10_decimal(result->bits, 2) > 0) {
           has_fraction = 1;
         }
         scale--;
@@ -71,8 +71,8 @@ int s21_floor(s21_decimal value, s21_decimal *result) {
         s21_add(*result, number_1, result);
       }
     }
-    set_sign(result, sign);
-    set_scale(result, scale);
+    s21_set_sign(result, sign);
+    s21_set_scale(result, scale);
   }
   return exit_code;
 }

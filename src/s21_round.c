@@ -3,11 +3,11 @@
 int s21_round(s21_decimal value, s21_decimal *result) {
   if (!result) return 1;
 
-  int exit_code = is_not_valid_decimal(&value);
+  int exit_code = s21_is_not_valid_decimal(&value);
 
   if (!exit_code) {
-    int sign = get_sign(&value);
-    int scale = get_scale(&value);
+    int sign = s21_get_sign(&value);
+    int scale = s21_get_scale(&value);
     if (scale == 0) {
       *result = value;
     } else {
@@ -16,7 +16,7 @@ int s21_round(s21_decimal value, s21_decimal *result) {
       s21_decimal integer_part = {0};
       s21_decimal fractional_part = {0};
       if (sign) {
-        set_sign(&value, !sign);
+        s21_set_sign(&value, !sign);
       }
       s21_truncate(value, &integer_part);
       s21_sub(value, integer_part, &fractional_part);
@@ -27,7 +27,7 @@ int s21_round(s21_decimal value, s21_decimal *result) {
       }
 
       if (sign) {
-        set_sign(result, sign);
+        s21_set_sign(result, sign);
       }
     }
   }
