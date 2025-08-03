@@ -60,6 +60,17 @@ START_TEST(test_div_4) {
 }
 END_TEST
 
+START_TEST(test_div_5) {
+  s21_decimal value_1 = {{0x1, 0x0, 0x0, 0x0}};
+  s21_decimal value_2 = {{0x2, 0x0, 0x0, 0x0}};
+  s21_decimal result = {{0}};
+  s21_decimal expected = {{0x5, 0, 0, 0x010000}}; // 0.5
+  int s21_code_return = s21_div(value_1, value_2, &result);
+  ck_assert_int_eq(s21_code_return, S21_OK);
+  ck_assert_int_eq(s21_is_equal(result, expected), 1);
+}
+END_TEST
+
 START_TEST(test_div_uncorrect_1) {
   // 0.7922816251426433759354395033
   s21_decimal value_1 = {{0x99999999, 0x99999999, 0x19999999, 0x1c0000}};
@@ -93,6 +104,7 @@ START_TEST(test_div_uncorrect_3) {
 }
 END_TEST
 
+
 Suite *div_suite(void) {
   Suite *s = suite_create("s21_div");
   TCase *tc = tcase_create("Core");
@@ -101,6 +113,7 @@ Suite *div_suite(void) {
   tcase_add_test(tc, test_div_2);
   tcase_add_test(tc, test_div_3);
   tcase_add_test(tc, test_div_4);
+  tcase_add_test(tc, test_div_5);
   tcase_add_test(tc, test_div_uncorrect_1);
   tcase_add_test(tc, test_div_uncorrect_2);
   tcase_add_test(tc, test_div_uncorrect_3);
