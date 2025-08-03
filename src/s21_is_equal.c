@@ -1,6 +1,3 @@
-#include <stdio.h>
-
-#include "s21_decimal.h"
 #include "s21_helpers.h"
 
 int s21_is_equal(s21_decimal value_1, s21_decimal value_2) {

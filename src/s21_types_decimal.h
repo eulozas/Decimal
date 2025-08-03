@@ -1,0 +1,38 @@
+#ifndef S21_TYPES_DECIMAL_H
+#define S21_TYPES_DECIMAL_H
+
+typedef struct {
+  unsigned bits[7];
+  unsigned scale;
+} big_decimal;
+
+#define MINUS 0x80000000
+
+#define MAX_DECIMAL_VALUE 79228162514264337593543950335.0
+#define MAX_DECIMAL_VALUE_NEXT 79228162514264337593543950336.0
+#define MAX_SCALE 28
+#define SIGNIF_DIGITS 7
+#define MAX_INT 2147483647
+#define POW_2_32 4294967296.0
+#define POW_2_64 18446744073709551616.0
+
+typedef enum {
+  S21_OK = 0,
+  S21_OVERFLOW = 1,
+  S21_UNDERFLOW = 2,
+  S21_NEG_OVERFLOW = 2,
+  S21_DIV_BY_ZERO = 3,
+  VALID_ERROR = -1
+} s21_error_code;
+
+typedef enum {
+  MAX_BITS_BIG_DECIMAL = 224,
+  MAX_BITS_DECIMAL = 96,
+  UINT_COUNT_BIG_DECIMAL = 7,
+  UINT_COUNT_DECIMAL = 3,
+  BITS_IN_UINT = 32
+} s21_size_decimal;
+
+typedef enum { BIT_ON = 1, BIT_OFF = 0, SIGN_OFF = 0 } s21_bit;
+
+#endif

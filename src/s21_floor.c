@@ -46,8 +46,6 @@
 //   return exit_code;
 // }
 
-#include "s21_arithmetic_helpers.h"
-#include "s21_decimal.h"
 #include "s21_helpers.h"
 
 int s21_floor(s21_decimal value, s21_decimal *result) {

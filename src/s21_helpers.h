@@ -3,11 +3,8 @@
 
 #include <math.h>
 
-#include "s21_arithmetic_helpers.h"
 #include "s21_decimal.h"
-
-#define MINUS 0x80000000
-#define SCL 0x00ff0000
+#include "s21_types_decimal.h"
 
 void clear_decimal(s21_decimal *decimal);
 int get_bit(const unsigned *decimal, int index);
@@ -21,20 +18,22 @@ double bank_round(double x);
 int count_digits_before_point(unsigned long long n);
 int find_point_index(double x);
 void normalize_mantissa(unsigned long long *mantissa, int *scale);
-// void mul_decimal_by_10_and_carry_bits(s21_decimal *decimal);
 void write_mantissa_to_decimal(unsigned long long mantissa,
                                s21_decimal *decimal);
-// int divide_by_10(unsigned int *high, unsigned int *mid, unsigned int *low);
-// int is_zero(const s21_decimal *decimal);
 int is_zero(const unsigned *bits, int index_high_bits);
 void to_zero(s21_decimal *decimal);
 void init_big_decimal(big_decimal *decimal);
 int check_free_decimal_bit(const s21_decimal *decimal);
-// void increment_decimal_bits(unsigned int *low, unsigned int *mid,
-//                             unsigned int *high);
-// void increment_decimal_bits(s21_decimal *decimal);
-
 void mul_10_decimal(unsigned *bits, int index_high_bits);
 void s21_normalization_big_scale(big_decimal *value_1, big_decimal *value_2);
 int is_not_valid_decimal(const s21_decimal *value);
+
+void to_big_decimal(const s21_decimal *decimal, big_decimal *b_decimal);
+
+unsigned div_10_decimal(unsigned *bits, int index_high_bits);
+
+int s21_is_greater_or_equal_big_decimal(big_decimal value_1,
+                                        big_decimal value_2);
+void s21_is_equal_mantissa(big_decimal value_1, big_decimal value_2,
+                           int *result, int *equal);
 #endif

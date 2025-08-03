@@ -217,3 +217,48 @@ int is_not_valid_decimal(const s21_decimal *value) {
   }
   return exit_code;
 }
+
+void to_big_decimal(const s21_decimal *decimal, big_decimal *b_decimal) {
+  for (int i = 0; i < UINT_COUNT_DECIMAL; i++) {
+    b_decimal->bits[i] = decimal->bits[i];
+  }
+  b_decimal->scale = get_scale(decimal);
+}
+
+unsigned div_10_decimal(unsigned *bits, int index_high_bits) {
+  unsigned long long remainder = 0;
+  for (int i = index_high_bits; i >= 0; i--) {
+    unsigned long long current =
+        (unsigned long long)bits[i] + (remainder << 32);
+    bits[i] = (unsigned)(current / 10);
+    remainder = current % 10;
+  }
+  return (unsigned)remainder;
+}
+
+int s21_is_greater_or_equal_big_decimal(big_decimal value_1,
+                                        big_decimal value_2) {
+  int result = 1;
+  int equal = 0;
+  s21_is_equal_mantissa(value_1, value_2, &result, &equal);
+  if (equal == UINT_COUNT_BIG_DECIMAL) {
+    result = 1;
+  }
+  return result;
+}
+
+void s21_is_equal_mantissa(big_decimal value_1, big_decimal value_2,
+                           int *result, int *equal) {
+  int flag_end = 1;
+  for (int i = UINT_COUNT_BIG_DECIMAL - 1; i >= 0 && flag_end; i--) {
+    if (value_1.bits[i] > value_2.bits[i]) {
+      *result = 1;
+      flag_end = 0;
+    } else if (value_1.bits[i] < value_2.bits[i]) {
+      *result = 0;
+      flag_end = 0;
+    } else {
+      (*equal)++;
+    }
+  }
+}

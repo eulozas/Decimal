@@ -64,7 +64,6 @@ int base_fract_div(const big_decimal *value_2, big_decimal *remainder,
                    big_decimal *quotient) {
   while (is_zero(remainder->bits, UINT_COUNT_BIG_DECIMAL) == 0 &&
          quotient->bits[6] < 0xfffffff) {
-    // mull_10_big_decimal(remainder);
     mul_10_decimal(remainder->bits, UINT_COUNT_BIG_DECIMAL);
     remainder->scale++;
     big_decimal digit = {{0}, 0};
@@ -74,7 +73,6 @@ int base_fract_div(const big_decimal *value_2, big_decimal *remainder,
       bit++;
     }
     digit.bits[0] = bit;
-    // mull_10_big_decimal(quotient);
     mul_10_decimal(quotient->bits, UINT_COUNT_BIG_DECIMAL);
     quotient->scale++;
     base_add(quotient, &digit, quotient);
@@ -110,13 +108,6 @@ int shift_left(big_decimal *decimal, int index) {
     }
   }
   return overflow;
-}
-
-void to_big_decimal(const s21_decimal *decimal, big_decimal *b_decimal) {
-  for (int i = 0; i < UINT_COUNT_DECIMAL; i++) {
-    b_decimal->bits[i] = decimal->bits[i];
-  }
-  b_decimal->scale = get_scale(decimal);
 }
 
 int big_to_decimal(big_decimal *b_decimal, s21_decimal *decimal) {
@@ -170,25 +161,6 @@ int mantissa_96_bit(const big_decimal *b_decimal, unsigned remainder,
   return ret;
 }
 
-unsigned div_10_decimal(unsigned *bits, int index_high_bits) {
-  unsigned long long remainder = 0;
-  for (int i = index_high_bits; i >= 0; i--) {
-    unsigned long long current =
-        (unsigned long long)bits[i] + (remainder << 32);
-    bits[i] = (unsigned)(current / 10);
-    remainder = current % 10;
-  }
-  return (unsigned)remainder;
-}
-
-// int is_zero_big_decimal(const big_decimal *b_decimal) {
-//   int ret = 1;
-//   for (int i = 0; i < UINT_COUNT_BIG_DECIMAL && ret; i++) {
-//     if (b_decimal->bits[i] != 0u) ret = 0;
-//   }
-//   return ret;
-// }
-
 int is_bankers_round_big_decimal_up(big_decimal *b_decimal, unsigned remainder,
                                     int tail) {
   return (remainder > 5 ||
@@ -202,32 +174,5 @@ void bankers_round_big_decimal(big_decimal *b_decimal, unsigned remainder,
     init_big_decimal(&tmp);
     tmp.bits[0] |= 1u;
     base_add(b_decimal, &tmp, b_decimal);
-  }
-}
-
-int s21_is_greater_or_equal_big_decimal(big_decimal value_1,
-                                        big_decimal value_2) {
-  int result = 1;
-  int equal = 0;
-  s21_is_equal_mantissa(value_1, value_2, &result, &equal);
-  if (equal == UINT_COUNT_BIG_DECIMAL) {
-    result = 1;
-  }
-  return result;
-}
-
-void s21_is_equal_mantissa(big_decimal value_1, big_decimal value_2,
-                           int *result, int *equal) {
-  int flag_end = 1;
-  for (int i = UINT_COUNT_BIG_DECIMAL - 1; i >= 0 && flag_end; i--) {
-    if (value_1.bits[i] > value_2.bits[i]) {
-      *result = 1;
-      flag_end = 0;
-    } else if (value_1.bits[i] < value_2.bits[i]) {
-      *result = 0;
-      flag_end = 0;
-    } else {
-      (*equal)++;
-    }
   }
 }
