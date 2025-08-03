@@ -4,10 +4,12 @@ CFLAGS = -std=c11 -Wall -Wextra -Werror -pedantic
 GCOV_FLAGS = -fprofile-arcs -ftest-coverage
 CHECK_LIBS = -lcheck -lm -lsubunit
 
+# ===== Директории объектных файлов =====
 BUILD_DIR = build
 SRC_OBJ_DIR = $(BUILD_DIR)/src
 TEST_OBJ_DIR = $(BUILD_DIR)/tests
 
+# ===== Файлы и папки отчетности =====
 COV_DIR = coverage
 COV_INFO = coverage.info
 COV_FILTERED = coverage_filtered.info
@@ -26,7 +28,6 @@ LIB_NAME = s21_decimal.a
 # ===== Тестовые файлы =====
 TEST_DIR = tests
 TEST_SRC = $(wildcard $(TEST_DIR)/*.c)
-TEST_OBJ = $(patsubst %.c, %.o, $(TEST_SRC))
 TEST_OBJ = $(patsubst $(TEST_DIR)/%.c, $(TEST_OBJ_DIR)/%.o, $(TEST_SRC))
 TEST_BIN = test_app
 
@@ -65,6 +66,7 @@ gcov_report: re coverage_build
 $(TEST_BIN): $(TEST_OBJ) $(LIB_NAME)
 	$(CC) $(CFLAGS) -I. $(TEST_OBJ) $(LIB_NAME) -o $(TEST_BIN) $(CHECK_LIBS)
 
+# ===== Создание папок =====
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
@@ -74,6 +76,7 @@ $(SRC_OBJ_DIR):
 $(TEST_OBJ_DIR):
 	mkdir -p $(TEST_OBJ_DIR)
 
+# ===== Проверка на cppcheck =====
 cppcheck:
 	cppcheck --enable=all --inconclusive --std=c11 --quiet --force \
   --suppress=missingIncludeSystem $(SRC) $(TEST_DIR)/

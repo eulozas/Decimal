@@ -565,7 +565,7 @@ START_TEST(test_div_uncorrect_3) {
 END_TEST
 
 Suite *arithmetic_suite(void) {
-  Suite *s = suite_create("s21_add");
+  Suite *s = suite_create("s21_arithmetic");
   TCase *tc = tcase_create("Core");
 
   tcase_add_test(tc, test_add_1);
