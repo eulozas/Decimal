@@ -2,8 +2,6 @@
 
 #include "../s21_decimal.h"
 
-// INT TO DECIMAL
-
 START_TEST(test_int_to_decimal_simple) {
   s21_decimal decimal;
   int x = 1;

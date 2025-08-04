@@ -1,8 +1,7 @@
 #include <check.h>
 
-#include "../s21_arithmetic_helpers.h"
 #include "../s21_decimal.h"
-#include "../s21_helpers.h"
+#include "../s21_types_decimal.h"
 
 START_TEST(test_add_1) {
   // 79228162514264337593543950335

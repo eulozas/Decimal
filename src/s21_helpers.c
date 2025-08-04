@@ -47,12 +47,10 @@ void s21_normalization_big_scale(s21_big_decimal *value_1,
   while (value_1->scale > value_2->scale) {
     s21_mul_10_decimal(value_2->bits, UINT_COUNT_BIG_DECIMAL);
     value_2->scale++;
-    // mull_10_big_decimal(value_2);
   }
   while (value_2->scale > value_1->scale) {
     s21_mul_10_decimal(value_1->bits, UINT_COUNT_BIG_DECIMAL);
     value_1->scale++;
-    // mull_10_big_decimal(value_1);
   }
 }
 
@@ -74,21 +72,17 @@ int s21_count_digits_before_point(unsigned long long n) {
 }
 
 double s21_bank_round(double x) {
-  // до нижнего
   double floor_x = floor(x);
   double diff = x - floor_x;
 
   if (diff > 0.5) {
-    // до верхнего
     return ceil(x);
   } else if (diff < 0.5) {
     return floor_x;
   } else {
     if (fmod(floor_x, 2.0) == 0.0) {
-      // чётное — вниз
       return floor_x;
     } else {
-      // нечётное — вверх
       return ceil(x);
     }
   }
@@ -121,42 +115,12 @@ void s21_mul_10_decimal(unsigned *bits, int index_high_bits) {
   }
 }
 
-// void mul_decimal_by_10_and_carry_bits(s21_decimal *decimal) {
-//   unsigned long long a = (unsigned long long)decimal->bits[0] * 10;
-//   unsigned long long b = (unsigned long long)decimal->bits[1] * 10 + (a >>
-//   32); unsigned long long c = (unsigned long long)decimal->bits[2] * 10 + (b
-//   >> 32);
-
-//   decimal->bits[0] = (unsigned int)(a & 0xFFFFFFFF);
-//   decimal->bits[1] = (unsigned int)(b & 0xFFFFFFFF);
-//   decimal->bits[2] = (unsigned int)(c & 0xFFFFFFFF);
-// }
-
 void s21_write_mantissa_to_decimal(unsigned long long mantissa,
                                    s21_decimal *decimal) {
   decimal->bits[0] = (unsigned int)(mantissa & 0xFFFFFFFF);
   decimal->bits[1] = (unsigned int)((mantissa >> BITS_IN_UINT) & 0xFFFFFFFF);
   decimal->bits[2] = 0;
 }
-
-// int divide_by_10(unsigned int *high, unsigned int *mid, unsigned int *low) {
-//   int has_fraction = 0;
-//   unsigned long long rest = 0;
-
-//   unsigned long long value = ((unsigned long long)(*high));
-//   *high = (unsigned int)(value / 10);
-//   rest = value % 10;
-
-//   value = ((unsigned long long)(*mid)) + (rest << 32);
-//   *mid = (unsigned int)(value / 10);
-//   rest = value % 10;
-
-//   value = ((unsigned long long)(*low)) + (rest << 32);
-//   *low = (unsigned int)(value / 10);
-//   if (value % 10 != 0) has_fraction = 1;  // дробное, остаток был
-
-//   return has_fraction;
-// }
 
 int s21_check_free_decimal_bit(const s21_decimal *decimal) {
   int res = 0;
@@ -175,15 +139,6 @@ int s21_check_free_decimal_bit(const s21_decimal *decimal) {
 
   return res;
 }
-
-// void increment_decimal_bits(unsigned int *low, unsigned int *mid,
-//                             unsigned int *high) {
-//   if (++(*low) == 0) {    // произошло переполнение low
-//     if (++(*mid) == 0) {  // переполнение mid
-//       ++(*high);          // прибавляем к high
-//     }
-//   }
-// }
 
 int s21_is_not_valid_decimal(const s21_decimal *value) {
   int exit_code = 0;

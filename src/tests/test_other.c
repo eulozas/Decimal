@@ -2,8 +2,6 @@
 
 #include "../s21_decimal.h"
 
-// INT TO DECIMAL
-
 START_TEST(test_floor_1) {
   // Decimal value:   -227725055642965785980985
   s21_decimal decimal = {{12345, 12345, 12345, 0x80000000}};
