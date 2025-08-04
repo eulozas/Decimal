@@ -563,6 +563,206 @@ START_TEST(test_div_uncorrect_3) {
 }
 END_TEST
 
+START_TEST(test_add_null) {
+  s21_decimal value_1 = {{0, 0, 0, 0}};
+  // 26790900105265827596743072504
+  s21_decimal value_2 = {{0x2be1daf8, 0xd93baf9b, 0x5690e9c4, 0x0}};
+  s21_decimal *result = NULL;
+  int s21_code_return = s21_add(value_1, value_2, result);
+  ck_assert_int_ne(s21_code_return, S21_OK);
+}
+END_TEST
+
+START_TEST(test_add_uncorrect_free_bits1) {
+  s21_decimal value_1 = {{0, 0, 0, 0x80000001}};
+  // 26790900105265827596743072504
+  s21_decimal value_2 = {{0x2be1daf8, 0xd93baf9b, 0x5690e9c4, 0x0}};
+  s21_decimal result;
+  int s21_code_return = s21_add(value_1, value_2, &result);
+  ck_assert_int_ne(s21_code_return, S21_OK);
+}
+END_TEST
+
+START_TEST(test_add_uncorrect_free_bits2) {
+  // 26790900105265827596743072504
+  s21_decimal value_1 = {{0x2be1daf8, 0xd93baf9b, 0x5690e9c4, 0x0}};
+  s21_decimal value_2 = {{0, 0, 0, 0x01000000}};
+  s21_decimal result;
+  int s21_code_return = s21_add(value_1, value_2, &result);
+  ck_assert_int_ne(s21_code_return, S21_OK);
+}
+END_TEST
+
+START_TEST(test_add_uncorrect_scale1) {
+  s21_decimal value_1 = {{5, 0, 0, 0x1E0000}};
+  // 26790900105265827596743072504
+  s21_decimal value_2 = {{0x2be1daf8, 0xd93baf9b, 0x5690e9c4, 0x0}};
+  s21_decimal result;
+  int s21_code_return = s21_add(value_1, value_2, &result);
+  ck_assert_int_ne(s21_code_return, S21_OK);
+}
+END_TEST
+
+START_TEST(test_add_uncorrect_scale2) {
+  s21_decimal value_1 = {{1, 0, 0, 0xFF0000}};
+  // 26790900105265827596743072504
+  s21_decimal value_2 = {{0x2be1daf8, 0xd93baf9b, 0x5690e9c4, 0x0}};
+  s21_decimal result;
+  int s21_code_return = s21_add(value_1, value_2, &result);
+  ck_assert_int_ne(s21_code_return, S21_OK);
+}
+END_TEST
+
+START_TEST(test_sub_null) {
+  s21_decimal value_1 = {{0, 0, 0, 0}};
+  // 26790900105265827596743072504
+  s21_decimal value_2 = {{0x2be1daf8, 0xd93baf9b, 0x5690e9c4, 0x0}};
+  s21_decimal *result = NULL;
+  int s21_code_return = s21_sub(value_1, value_2, result);
+  ck_assert_int_ne(s21_code_return, S21_OK);
+}
+END_TEST
+
+START_TEST(test_sub_uncorrect_free_bits1) {
+  s21_decimal value_1 = {{0, 0, 0, 0x80000001}};
+  // 26790900105265827596743072504
+  s21_decimal value_2 = {{0x2be1daf8, 0xd93baf9b, 0x5690e9c4, 0x0}};
+  s21_decimal result;
+  int s21_code_return = s21_sub(value_1, value_2, &result);
+  ck_assert_int_ne(s21_code_return, S21_OK);
+}
+END_TEST
+
+START_TEST(test_sub_uncorrect_free_bits2) {
+  // 26790900105265827596743072504
+  s21_decimal value_1 = {{0x2be1daf8, 0xd93baf9b, 0x5690e9c4, 0x0}};
+  s21_decimal value_2 = {{0, 0, 0, 0x01000000}};
+  s21_decimal result;
+  int s21_code_return = s21_sub(value_1, value_2, &result);
+  ck_assert_int_ne(s21_code_return, S21_OK);
+}
+END_TEST
+
+START_TEST(test_sub_uncorrect_scale1) {
+  s21_decimal value_1 = {{5, 0, 0, 0x1E0000}};
+  // 26790900105265827596743072504
+  s21_decimal value_2 = {{0x2be1daf8, 0xd93baf9b, 0x5690e9c4, 0x0}};
+  s21_decimal result;
+  int s21_code_return = s21_sub(value_1, value_2, &result);
+  ck_assert_int_ne(s21_code_return, S21_OK);
+}
+END_TEST
+
+START_TEST(test_sub_uncorrect_scale2) {
+  s21_decimal value_1 = {{1, 0, 0, 0xFF0000}};
+  // 26790900105265827596743072504
+  s21_decimal value_2 = {{0x2be1daf8, 0xd93baf9b, 0x5690e9c4, 0x0}};
+  s21_decimal result;
+  int s21_code_return = s21_sub(value_1, value_2, &result);
+  ck_assert_int_ne(s21_code_return, S21_OK);
+}
+END_TEST
+
+START_TEST(test_mul_null) {
+  s21_decimal value_1 = {{0, 0, 0, 0}};
+  // 26790900105265827596743072504
+  s21_decimal value_2 = {{0x2be1daf8, 0xd93baf9b, 0x5690e9c4, 0x0}};
+  s21_decimal *result = NULL;
+  int s21_code_return = s21_mul(value_1, value_2, result);
+  ck_assert_int_ne(s21_code_return, S21_OK);
+}
+END_TEST
+
+START_TEST(test_mul_uncorrect_free_bits1) {
+  s21_decimal value_1 = {{0, 0, 0, 0x80000001}};
+  // 26790900105265827596743072504
+  s21_decimal value_2 = {{0x2be1daf8, 0xd93baf9b, 0x5690e9c4, 0x0}};
+  s21_decimal result;
+  int s21_code_return = s21_mul(value_1, value_2, &result);
+  ck_assert_int_ne(s21_code_return, S21_OK);
+}
+END_TEST
+
+START_TEST(test_mul_uncorrect_free_bits2) {
+  // 26790900105265827596743072504
+  s21_decimal value_1 = {{0x2be1daf8, 0xd93baf9b, 0x5690e9c4, 0x0}};
+  s21_decimal value_2 = {{0, 0, 0, 0x01000000}};
+  s21_decimal result;
+  int s21_code_return = s21_mul(value_1, value_2, &result);
+  ck_assert_int_ne(s21_code_return, S21_OK);
+}
+END_TEST
+
+START_TEST(test_mul_uncorrect_scale1) {
+  s21_decimal value_1 = {{5, 0, 0, 0x1E0000}};
+  // 26790900105265827596743072504
+  s21_decimal value_2 = {{0x2be1daf8, 0xd93baf9b, 0x5690e9c4, 0x0}};
+  s21_decimal result;
+  int s21_code_return = s21_mul(value_1, value_2, &result);
+  ck_assert_int_ne(s21_code_return, S21_OK);
+}
+END_TEST
+
+START_TEST(test_mul_uncorrect_scale2) {
+  s21_decimal value_1 = {{1, 0, 0, 0xFF0000}};
+  // 26790900105265827596743072504
+  s21_decimal value_2 = {{0x2be1daf8, 0xd93baf9b, 0x5690e9c4, 0x0}};
+  s21_decimal result;
+  int s21_code_return = s21_mul(value_1, value_2, &result);
+  ck_assert_int_ne(s21_code_return, S21_OK);
+}
+END_TEST
+
+START_TEST(test_div_null) {
+  s21_decimal value_1 = {{0, 0, 0, 0}};
+  // 26790900105265827596743072504
+  s21_decimal value_2 = {{0x2be1daf8, 0xd93baf9b, 0x5690e9c4, 0x0}};
+  s21_decimal *result = NULL;
+  int s21_code_return = s21_div(value_1, value_2, result);
+  ck_assert_int_ne(s21_code_return, S21_OK);
+}
+END_TEST
+
+START_TEST(test_div_uncorrect_free_bits1) {
+  s21_decimal value_1 = {{0, 0, 0, 0x80000001}};
+  // 26790900105265827596743072504
+  s21_decimal value_2 = {{0x2be1daf8, 0xd93baf9b, 0x5690e9c4, 0x0}};
+  s21_decimal result;
+  int s21_code_return = s21_div(value_1, value_2, &result);
+  ck_assert_int_ne(s21_code_return, S21_OK);
+}
+END_TEST
+
+START_TEST(test_div_uncorrect_free_bits2) {
+  // 26790900105265827596743072504
+  s21_decimal value_1 = {{0x2be1daf8, 0xd93baf9b, 0x5690e9c4, 0x0}};
+  s21_decimal value_2 = {{0, 0, 0, 0x01000000}};
+  s21_decimal result;
+  int s21_code_return = s21_div(value_1, value_2, &result);
+  ck_assert_int_ne(s21_code_return, S21_OK);
+}
+END_TEST
+
+START_TEST(test_div_uncorrect_scale1) {
+  s21_decimal value_1 = {{5, 0, 0, 0x1E0000}};
+  // 26790900105265827596743072504
+  s21_decimal value_2 = {{0x2be1daf8, 0xd93baf9b, 0x5690e9c4, 0x0}};
+  s21_decimal result;
+  int s21_code_return = s21_div(value_1, value_2, &result);
+  ck_assert_int_ne(s21_code_return, S21_OK);
+}
+END_TEST
+
+START_TEST(test_div_uncorrect_scale2) {
+  s21_decimal value_1 = {{1, 0, 0, 0xFF0000}};
+  // 26790900105265827596743072504
+  s21_decimal value_2 = {{0x2be1daf8, 0xd93baf9b, 0x5690e9c4, 0x0}};
+  s21_decimal result;
+  int s21_code_return = s21_div(value_1, value_2, &result);
+  ck_assert_int_ne(s21_code_return, S21_OK);
+}
+END_TEST
+
 Suite *arithmetic_suite(void) {
   Suite *s = suite_create("s21_arithmetic");
   TCase *tc = tcase_create("Core");
@@ -613,6 +813,30 @@ Suite *arithmetic_suite(void) {
   tcase_add_test(tc, test_div_uncorrect_1);
   tcase_add_test(tc, test_div_uncorrect_2);
   tcase_add_test(tc, test_div_uncorrect_3);
+
+  tcase_add_test(tc, test_add_null);
+  tcase_add_test(tc, test_add_uncorrect_free_bits1);
+  tcase_add_test(tc, test_add_uncorrect_free_bits2);
+  tcase_add_test(tc, test_add_uncorrect_scale1);
+  tcase_add_test(tc, test_add_uncorrect_scale2);
+
+  tcase_add_test(tc, test_sub_null);
+  tcase_add_test(tc, test_sub_uncorrect_free_bits1);
+  tcase_add_test(tc, test_sub_uncorrect_free_bits2);
+  tcase_add_test(tc, test_sub_uncorrect_scale1);
+  tcase_add_test(tc, test_sub_uncorrect_scale2);
+
+  tcase_add_test(tc, test_mul_null);
+  tcase_add_test(tc, test_mul_uncorrect_free_bits1);
+  tcase_add_test(tc, test_mul_uncorrect_free_bits2);
+  tcase_add_test(tc, test_mul_uncorrect_scale1);
+  tcase_add_test(tc, test_mul_uncorrect_scale2);
+
+  tcase_add_test(tc, test_div_null);
+  tcase_add_test(tc, test_div_uncorrect_free_bits1);
+  tcase_add_test(tc, test_div_uncorrect_free_bits2);
+  tcase_add_test(tc, test_div_uncorrect_scale1);
+  tcase_add_test(tc, test_div_uncorrect_scale2);
 
   suite_add_tcase(s, tc);
   return s;
