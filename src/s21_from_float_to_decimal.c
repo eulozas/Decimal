@@ -26,7 +26,6 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {
       s21_write_mantissa_to_decimal(mantissa, dst);
       while (scale) {
         s21_mul_10_decimal(dst->bits, UINT_COUNT_DECIMAL);
-        // mul_decimal_by_10_and_carry_bits(dst);
         scale--;
       }
     } else {
