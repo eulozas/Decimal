@@ -26,12 +26,10 @@
 
 ## Build
 
-```bash
 make
 
 ## Usage
 
-```bash
 # Запуск unit-тестов
 make test
 
