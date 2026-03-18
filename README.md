@@ -30,8 +30,8 @@ make
 
 ## Usage
 
-# Запуск unit-тестов
+### Запуск unit-тестов
 make test
 
-# Генерация отчета gcov
+### Генерация отчета gcov
 make gcov_report
